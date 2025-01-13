@@ -1,0 +1,46 @@
+{
+  "expo": {
+    "name": "jivah",
+    "slug": "jivah-collections-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "myapp",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.mugabejeanaime.jivah"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.jpg",
+        "backgroundColor": "#111312"
+      },
+      "package": "com.mugabejeanaime.jivah"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "imageWidth": 200,
+      "resizeMode": "cover",
+      "backgroundColor": "#111312"
+    },
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "12e25f48-f481-4ff3-87d9-6294552d5bd7"
+      }
+    },
+    "owner": "mugabejean"
+  }
+}
