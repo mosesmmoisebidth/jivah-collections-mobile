@@ -1,51 +1,65 @@
-import React, { useState, useEffect } from 'react';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
-import 'react-native-gesture-handler';
-import { useColorScheme } from '@/hooks/useColorScheme';
-import { CartProvider } from '@/Providers/CartContext';
-import { Stack } from 'expo-router';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import React, { useState, useEffect } from "react";
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+} from "@react-navigation/native";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+import { StatusBar } from "expo-status-bar";
+import "react-native-reanimated";
+import "react-native-gesture-handler";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { Stack, useRouter } from "expo-router";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import Toast from "react-native-toast-message";
+import StorageService from "@/services/storage";
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-    OutfitMain: require('../assets/fonts/Outfit-Regular.ttf'),
-    OutfitSemibold: require('../assets/fonts/Outfit-SemiBold.ttf'),
-    OutfitBold: require('../assets/fonts/Outfit-Bold.ttf'),
-    PoppinsMain: require('../assets/fonts/Outfit-Regular.ttf'),
+    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    OutfitMain: require("../assets/fonts/Outfit-Regular.ttf"),
+    OutfitSemibold: require("../assets/fonts/Outfit-SemiBold.ttf"),
+    OutfitBold: require("../assets/fonts/Outfit-Bold.ttf"),
+    PoppinsMain: require("../assets/fonts/Outfit-Regular.ttf"),
   });
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
+    const checkAuthentication = async () => {
+      const accessToken = await StorageService.getData("accessToken");
+      setIsAuthenticated(!!accessToken);
+      if (loaded) SplashScreen.hideAsync();
+    };
+
+    checkAuthentication();
   }, [loaded]);
 
-  if (!loaded) {
-    return null;
-  }
+  if (!loaded) return null;
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace("/(tabs)/Home");
+    } else {
+      router.replace("/(auth)/sign-in");
+    }
+  }, [isAuthenticated]);
 
   return (
     <GestureHandlerRootView>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <CartProvider>
+      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
           <Stack>
-            {/* Stack.Screen in expo-router automatically resolves screens based on the folder structure */}
             <Stack.Screen name="(auth)" options={{ headerShown: false }} />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="+not-found" />
           </Stack>
-        </CartProvider>
         <StatusBar style="auto" />
       </ThemeProvider>
+      <Toast />
     </GestureHandlerRootView>
   );
 }

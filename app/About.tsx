@@ -5,59 +5,59 @@ import {
   ScrollView,
   Image,
   Dimensions,
-} from 'react-native';
-import React from 'react';
-import Header from '@/components/app/Header';
-import { StatusBar } from 'expo-status-bar';
-import tw from 'twrnc';
-import { OutfitSemibold, OutfitText } from '@/components/StyledText';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import { Entypo, FontAwesome } from '@expo/vector-icons';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+} from "react-native";
+import React from "react";
+import Header from "@/components/app/Header";
+import { StatusBar } from "expo-status-bar";
+import tw from "twrnc";
+import { OutfitSemibold, OutfitText } from "@/components/StyledText";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import { Entypo, FontAwesome } from "@expo/vector-icons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 const About = () => {
   const items = [
-    'Fashion Collections',
-    'Customization',
-    'Delivery Services',
-    'E-Commerce',
+    "Fashion Collections",
+    "Customization",
+    "Delivery Services",
+    "E-Commerce",
   ];
   const items_main = [
     {
       id: 1,
       icon: <FontAwesome5 name="lightbulb" size={24} color="#c48647" />,
-      desc: 'Innovative Fashion Solutions',
+      desc: "Innovative Fashion Solutions",
     },
     {
       id: 2,
       icon: <Entypo name="shopping-cart" size={24} color="#c48647" />,
-      desc: 'Convenience',
+      desc: "Convenience",
     },
     {
       id: 3,
       icon: <FontAwesome name="check-circle" size={24} color="#c48647" />,
-      desc: 'Quality Assurance',
+      desc: "Quality Assurance",
     },
     {
       id: 4,
       icon: (
         <MaterialCommunityIcons name="certificate" size={24} color="#c48647" />
       ),
-      desc: 'Customer-Centric Approach',
+      desc: "Customer-Centric Approach",
     },
     {
       id: 5,
       icon: <FontAwesome name="line-chart" size={24} color="#c48647" />,
-      desc: 'Reputation',
+      desc: "Reputation",
     },
   ];
   const partners = [
-    require('../../assets/images/adidaslogo.jpg'),
-    require('../../assets/images/chanellogo.jpg'),
-    require('../../assets/images/filalogo.jpg'),
-    require('../../assets/images/guccilogo.jpg'),
-    require('../../assets/images/nikelogo.jpg'),
+    require("../assets/images/adidaslogo.jpg"),
+    require("../assets/images/chanellogo.jpg"),
+    require("../assets/images/filalogo.jpg"),
+    require("../assets/images/guccilogo.jpg"),
+    require("../assets/images/nikelogo.jpg"),
   ];
   return (
     <SafeAreaView style={tw`bg-white pt-6`}>
@@ -151,7 +151,7 @@ const About = () => {
               >
                 <Image
                   source={image}
-                  style={[tw`h-80`, { width: '100%', resizeMode: 'contain' }]}
+                  style={[tw`h-80`, { width: "100%", resizeMode: "contain" }]}
                 />
               </View>
             ))}
@@ -159,6 +159,7 @@ const About = () => {
         </View>
         <StatusBar backgroundColor="transparent" style="dark" />
       </ScrollView>
+      <StatusBar backgroundColor="transparent" style="dark" />
     </SafeAreaView>
   );
 };

@@ -76,7 +76,7 @@ export default function Home() {
   return (
     <SafeAreaView style={tw`bg-white`}>
       {/* Header */}
-      <Header />
+      <Header cart />
 
       {/* Main Content */}
       <ScrollView style={tw`bg-white`}>
@@ -195,15 +195,15 @@ export default function Home() {
           </View>
 
           {/* Product Lists */}
-          <ProductList
+          {/* <ProductList
             title="Best Selling"
-            tag="bestselling"
-            onProductClick={handleProductClick}
-          />
+            category="bestselling"
+            
+          /> */}
           <ProductList
             title="Latest Products"
-            tag="latest"
-            onProductClick={handleProductClick}
+            category="latest"
+            
           />
         </View>
       </ScrollView>

@@ -3,7 +3,7 @@ import {
   Text,
   SafeAreaView,
   ScrollView,
-  TextInput,
+  TextInput as  DefaultTextInput,
   TouchableOpacity,
   Image,
 } from 'react-native';
@@ -12,7 +12,7 @@ import Header from '@/components/app/Header';
 import { StatusBar } from 'expo-status-bar';
 import tw from 'twrnc';
 import { OutfitBold, OutfitText } from '@/components/StyledText';
-import TextInputWithLabel from '@/components/app/TextInput';
+import TextInput  from '@/components/app/TextInput';
 import CheckboxInput from '@/components/app/CheckboxInput';
 import { useNavigation } from 'expo-router';
 
@@ -54,7 +54,7 @@ const Checkout = () => {
             style={tw`border border-gray-400 rounded-lg px-3 py-4 flex-col gap-3`}
           >
             <OutfitBold style={tw`text-base`}>Billing details</OutfitBold>
-            <TextInputWithLabel
+            <TextInput
               label={true}
               type="text"
               label_name="First Name"
@@ -62,27 +62,27 @@ const Checkout = () => {
               value={firstName}
               onChangeText={setFirstName}
             />
-            <TextInputWithLabel
+            <TextInput
               type="text"
               label_name="Last Name"
               placeholder="Last Name"
               value={lastName}
               onChangeText={setLastName}
             />
-            {/* <TextInputWithLabel
+            {/* <TextInput
               label_name="Country"
               value={selectedCountry}
               onChangeText={setSelectedCountry}
               type="countrySelector"
             /> */}
-            <TextInputWithLabel
+            <TextInput
               label_name="Description"
               placeholder="Enter a detailed description"
               value={description}
               onChangeText={setDescription}
               type="textarea"
             />
-            <TextInputWithLabel
+            <TextInput
               type="text"
               label_name="Phone"
               placeholder="Phone"
@@ -96,27 +96,27 @@ const Checkout = () => {
             />
             {isChecked && (
               <View style={tw`p-4 rounded-md flex-col gap-2`}>
-                <TextInputWithLabel
+                <TextInput
                   type="text"
                   label_name="First Name"
                   placeholder="First Name"
                   value={firstNames}
                   onChangeText={setFirstNames}
                 />
-                <TextInputWithLabel
+                <TextInput
                   type="text"
                   label_name="Last Name"
                   placeholder="Last Name"
                   value={lastNames}
                   onChangeText={setLastNames}
                 />
-                {/* <TextInputWithLabel
+                {/* <TextInput
                     label_name="Country"
                     value={selectedCountry}
                     onChangeText={setSelectedCountry}
                     type="countrySelector"
                     /> */}
-                <TextInputWithLabel
+                <TextInput
                   label_name="Description"
                   placeholder="Enter a detailed description"
                   value={descriptions}
@@ -125,7 +125,7 @@ const Checkout = () => {
                 />
               </View>
             )}
-            <TextInputWithLabel
+            <TextInput
               label_name="Order notes (optional)"
               placeholder="Notes about your order, e.g. special notes for delivery."
               value={description}
@@ -188,7 +188,7 @@ const Checkout = () => {
             {/* View to display */}
             {showCouponInput && (
               <View>
-                <TextInputWithLabel
+                <TextInput
                   label_name="If you have a coupon code, please apply it below."
                   type="text"
                   placeholder="Coupon code"
@@ -243,7 +243,7 @@ const Checkout = () => {
                   </Text>
                 )}
               </View>
-              <TextInputWithLabel
+              <TextInput
                 type="text"
                 label_name="Phone"
                 placeholder="Enter Phone Number (MTN or AIRTEL)"
