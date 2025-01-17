@@ -27,19 +27,22 @@ export default function RootLayout() {
     PoppinsMain: require("../assets/fonts/Outfit-Regular.ttf"),
   });
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
   const router = useRouter();
 
   useEffect(() => {
     const checkAuthentication = async () => {
       const accessToken = await StorageService.getData("accessToken");
       setIsAuthenticated(!!accessToken);
+      setIsLoading(false); // Set loading to false after checking authentication
       if (loaded) SplashScreen.hideAsync();
     };
 
     checkAuthentication();
   }, [loaded]);
 
-  if (!loaded) return null;
+  // Show Splash Screen while fonts are loading or authentication is being checked
+  if (!loaded || isLoading) return null;
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -52,11 +55,11 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-          <Stack>
-            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="+not-found" />
-          </Stack>
+        <Stack>
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" />
+        </Stack>
         <StatusBar style="auto" />
       </ThemeProvider>
       <Toast />
