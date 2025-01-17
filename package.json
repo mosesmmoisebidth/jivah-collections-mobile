@@ -30,6 +30,7 @@
     "expo-constants": "~17.0.3",
     "expo-font": "~13.0.1",
     "expo-haptics": "~14.0.0",
+    "expo-image-picker": "~16.0.4",
     "expo-linear-gradient": "~14.0.1",
     "expo-linking": "~7.0.3",
     "expo-router": "^4.0.9",
@@ -39,6 +40,7 @@
     "expo-system-ui": "~4.0.4",
     "expo-web-browser": "~14.0.1",
     "headers-polyfill": "^4.0.3",
+    "jivah": "file:",
     "promise-polyfill": "^8.3.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -55,8 +57,7 @@
     "react-native-web": "^0.19.13",
     "react-native-webview": "^13.12.2",
     "react-server-dom-webpack": "^0.0.1",
-    "twrnc": "^4.6.0",
-    "expo-image-picker": "~16.0.4"
+    "twrnc": "^4.6.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
