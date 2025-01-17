@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "jivah",
-    "slug": "jivah-collections-mobile",
+    "slug": "jivah",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -38,9 +38,9 @@
         "origin": false
       },
       "eas": {
-        "projectId": "12e25f48-f481-4ff3-87d9-6294552d5bd7"
+        "projectId": "445230ff-8184-44fa-8367-e9d612048c21"
       }
     },
-    "owner": "mugabejean"
+    "owner": "kingers"
   }
 }
