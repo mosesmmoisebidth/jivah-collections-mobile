@@ -38,9 +38,12 @@
         "origin": false
       },
       "eas": {
-        "projectId": "445230ff-8184-44fa-8367-e9d612048c21"
+        "projectId": "c1a0d359-cfd7-429f-b472-97f7bb871bcc"
       }
     },
-    "owner": "kingers"
+    "owner": "mugisha189",
+    "plugins": [
+      "expo-router"
+    ]
   }
 }

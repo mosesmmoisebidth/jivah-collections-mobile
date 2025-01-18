@@ -154,7 +154,7 @@ const ProductDetail: React.FC = () => {
             <OutfitText>{product.product_description?.join(" ")}</OutfitText>
 
             <Separator />
-            <OutfitSemibold>Other Colors:</OutfitSemibold>
+            <OutfitSemibold>Other Images:</OutfitSemibold>
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}

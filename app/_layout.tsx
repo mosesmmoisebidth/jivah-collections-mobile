@@ -19,45 +19,59 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
+  const [fontsLoaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     OutfitMain: require("../assets/fonts/Outfit-Regular.ttf"),
     OutfitSemibold: require("../assets/fonts/Outfit-SemiBold.ttf"),
     OutfitBold: require("../assets/fonts/Outfit-Bold.ttf"),
     PoppinsMain: require("../assets/fonts/Outfit-Regular.ttf"),
   });
+
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); // Add loading state
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    const checkAuthentication = async () => {
-      const accessToken = await StorageService.getData("accessToken");
-      setIsAuthenticated(!!accessToken);
-      setIsLoading(false); // Set loading to false after checking authentication
-      if (loaded) SplashScreen.hideAsync();
+    const initializeApp = async () => {
+      try {
+        const accessToken = await StorageService.getData("accessToken");
+        setIsAuthenticated(!!accessToken);
+      } catch (error) {
+        console.error("Error checking authentication:", error);
+      } finally {
+        setIsLoading(false); // Authentication check completed
+        if (fontsLoaded) await SplashScreen.hideAsync(); // Hide splash screen
+      }
     };
 
-    checkAuthentication();
-  }, [loaded]);
-
-  // Show Splash Screen while fonts are loading or authentication is being checked
-  if (!loaded || isLoading) return null;
+    if (fontsLoaded) {
+      initializeApp();
+    }
+  }, [fontsLoaded]);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      router.replace("/(tabs)/Home");
-    } else {
-      router.replace("/(auth)/sign-in");
+    if (!isLoading) {
+      // Navigate only after loading and authentication checks are complete
+      if (isAuthenticated) {
+        router.replace("/(tabs)/Home");
+      } else {
+        router.replace("/(auth)/sign-in");
+      }
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, isLoading]);
+
+  if (!fontsLoaded || isLoading) return null;
 
   return (
-    <GestureHandlerRootView>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <Stack>
           <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="About" options={{ headerShown: false }} />
+          <Stack.Screen name="ChangePassword" options={{ headerShown: false }} />
+          <Stack.Screen name="Profile" options={{ headerShown: false }} />
+          <Stack.Screen name="Cart" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
         </Stack>
         <StatusBar style="auto" />

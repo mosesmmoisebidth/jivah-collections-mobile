@@ -136,6 +136,12 @@ class ProductService {
       );
       const cart = await this.viewCart();
       await StorageService.updateData("cart", cart);
+      Toast.show({
+        type: "success",
+        position: "top",
+        text1: "Item added to cart successfully",
+        text2: "The item was added to the cart successfully!",
+      });
       return response.data;
     } catch (error) {
       Toast.show({

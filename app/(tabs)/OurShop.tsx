@@ -52,7 +52,7 @@ const OurShop = () => {
   const handleAddToCart = async (id: any) => {
     setIsAddingToCart(id);
     await ProductService.addToCart(id, 1);
-    setIsAddingToCart(null);
+    setIsAddingToCart("");
   };
 
   const CartItem = ({ item }: { item: Product }) => (

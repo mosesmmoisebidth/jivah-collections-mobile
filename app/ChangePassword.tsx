@@ -98,7 +98,7 @@ const ChangePassword = () => {
     <SafeAreaView style={tw`flex-1 bg-white pt-6`}>
       <Header title="Change Password" />
       <ScrollView contentContainerStyle={tw`px-4 pb-4`}>
-        <View style={tw`mb-6`}>
+        <View style={tw`mb-6 `}>
           <View style={tw`items-center mb-6`}>
             <Ionicons
               name="lock-closed"
@@ -141,7 +141,7 @@ const ChangePassword = () => {
           <TouchableOpacity
             onPress={handleSubmit}
             disabled={isLoading}
-            style={tw`p-4 font-semibold text-2xl ${
+            style={tw`p-4 font-semibold text-2xl mt-5 ${
               isLoading ? "bg-gray-400" : "bg-[#c48647]"
             } flex justify-center items-center rounded-full`}
           >

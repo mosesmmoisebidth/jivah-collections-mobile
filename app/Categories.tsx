@@ -48,7 +48,7 @@ const Categories = () => {
       <FlatList
         data={categories}
         keyExtractor={(index) => index.toString()} // Use index if no unique IDs
-        renderItem={({ item }) => <Category item={item} />} // Pass `item` to Category component
+        renderItem={({ item }) => <Category item={item as any} />} // Pass `item` to Category component
         contentContainerStyle={tw`px-4 flex-col gap-3 pb-4 pt-3`}
         ListEmptyComponent={
           <OutfitText style={tw`text-center text-gray-500 mt-10`}>
