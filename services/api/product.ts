@@ -207,8 +207,11 @@ class ProductService {
         "/products/product/cart/view"
       );
 
+      console.log(response.data.payload);
+
       return response.data.payload.cart;
-    } catch (error) {
+    } catch (error: any) {
+      console.log(error.response.data);
       Toast.show({
         type: "error",
         position: "top",

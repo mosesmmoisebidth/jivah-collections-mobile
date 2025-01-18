@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
   ActivityIndicator,
-  ScrollView
+  ScrollView,
 } from "react-native";
 import React, { useState } from "react";
 import tw from "twrnc";
@@ -24,12 +24,12 @@ import AuthService from "@/services/api/auth";
 
 const SignIn = () => {
   const [formData, setFormData] = useState({
-    username: "",
+    email: "",
     password: "",
   });
 
   const [errors, setErrors] = useState({
-    username: undefined,
+    email: undefined,
     password: undefined,
   });
 
@@ -38,23 +38,19 @@ const SignIn = () => {
   const validateForm = (): boolean => {
     let isValid = true;
     const newErrors: any = {};
-    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const usernameRegex = /^[A-Za-z0-9_]{4,}$/; // Username should be at least 4 chars and alphanumeric
 
-    if (
-      // !emailRegex.test(formData.username.trim()) &&
-      !usernameRegex.test(formData.username.trim())
-    ) {
-      newErrors.username = "Please enter a valid email address or username.";
+    if (!emailRegex.test(formData.email.trim())) {
+      newErrors.email = "Please enter a valid email address .";
       isValid = false;
     } else {
-      newErrors.username = undefined;
+      newErrors.email = undefined;
     }
 
     const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
     if (!passwordRegex.test(formData.password.trim())) {
-      newErrors.password =
-        "Password must be at least 8 characters long and include at least one letter and one number.";
+      ("Password must be at least 8 characters long and include at least one letter and one number.");
       isValid = false;
     } else {
       newErrors.password = undefined;
@@ -92,14 +88,14 @@ const SignIn = () => {
 
           <View style={tw`flex-col gap-3 py-6`}>
             <TextInput
-              label_name="Username"
-              placeholder="eg:johndoe"
-              value={formData.username}
-              onChangeText={(value) => handleInputChange("username", value)}
+              label_name="Email"
+              placeholder="eg:johndoe@gmail.com"
+              value={formData.email}
+              onChangeText={(value) => handleInputChange("email", value)}
               type="text"
               label={true}
               prefixIcon={<Ionicons name="mail" size={20} color="gray" />}
-              errorMessage={errors.username}
+              errorMessage={errors.email}
             />
             <TextInput
               label_name="Password"
@@ -132,7 +128,7 @@ const SignIn = () => {
                   />
                 )}
                 <OutfitText style={tw`text-white`}>
-                  {isLoading ? "Loading..." : "Login"}
+                  {!isLoading && "Login"}
                 </OutfitText>
               </View>
             </TouchableOpacity>

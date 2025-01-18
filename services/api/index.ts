@@ -1,6 +1,6 @@
 import axios, {
+  AxiosInstance,
   AxiosRequestConfig,
-  AxiosHeaders,
   InternalAxiosRequestConfig,
 } from "axios";
 import StorageService from "../storage";
@@ -15,51 +15,40 @@ class ApiService {
     },
   });
 
-  private static authorizedApi = axios.create({
+  private static authorizedApi: AxiosInstance = axios.create({
     baseURL: BASE_URL,
     headers: {
       "Content-Type": "application/json",
     },
   });
 
-  private static async getToken(): Promise<string | null> {
-    try {
-      return await StorageService.getData<string>("accessToken");
-    } catch (error) {
-      console.error("Error retrieving token from storage:", error);
-      return null;
-    }
-  }
-
   private static async setAuthorizedApiToken(): Promise<void> {
-    const token = await this.getToken();
+    const token = await StorageService.getData<string>("accessToken");
     if (token) {
       this.authorizedApi.defaults.headers["Authorization"] = `Bearer ${token}`;
+    } else {
+      delete this.authorizedApi.defaults.headers["Authorization"];
     }
   }
 
   private static setAuthorizedApiInterceptors(): void {
     this.authorizedApi.interceptors.request.use(
       async (config: InternalAxiosRequestConfig) => {
-        try {
-          // Set token immediately after initialization
-          await this.setAuthorizedApiToken();
-        } catch (error) {
-          console.error("Error retrieving token:", error);
+        const token = await StorageService.getData<string>("accessToken");
+        console.log("Using token for authorized request:", token);
+        if (token) {
+          config.headers["Authorization"] = `Bearer ${token}`;
+        } else {
+          delete config.headers["Authorization"];
         }
         return config;
       },
-      (error) => {
-        console.error("Request error:", error);
-        return Promise.reject(error);
-      }
+      (error) => Promise.reject(error)
     );
   }
 
   public static initialize(): void {
     this.setAuthorizedApiInterceptors();
-    // Immediately add token to the authorizedApi on initialization
-    this.setAuthorizedApiToken();
   }
 
   public static get unauthorized() {

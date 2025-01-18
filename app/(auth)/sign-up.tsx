@@ -202,7 +202,7 @@ const SignUp = () => {
                   />
                 )}
                 <OutfitText style={tw`text-white`}>
-                  {isLoading ? "Loading..." : "Register"}
+                  {!isLoading &&  "Register"}
                 </OutfitText>
               </View>
             </TouchableOpacity>

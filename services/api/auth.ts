@@ -12,10 +12,10 @@ import ProductService from "./product";
 class AuthService {
   static async login(credentials: Login, onSuccess?: () => void): Promise<any> {
     try {
-      const response = await ApiService.unauthorized.post(
-        "/auth/login",
-        credentials
-      );
+      const response = await ApiService.unauthorized.post("/auth/login", {
+        username: credentials.email,
+        password: credentials.password,
+      });
       await StorageService.saveData(
         "accessToken",
         response.data.payload.tokens.accessToken
