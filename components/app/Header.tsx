@@ -11,19 +11,38 @@ import StorageService from "@/services/storage";
 interface HeaderProps {
   title?: string; // Title is optional
   cart?: boolean; // Cart is optional, defaults to false
+  back?: boolean; // Back button is optional, defaults to false
 }
 
-const Header: React.FC<HeaderProps> = ({ title, cart = false }) => {
+const Header: React.FC<HeaderProps> = ({
+  title,
+  cart = false,
+  back = false,
+}) => {
   const navigation = useNavigation();
   const route = useRoute();
   const [cartData, setCartData] = useState<any>();
 
   useEffect(() => {
-    const getCart = async () => {
-      const cart = await StorageService.getData("cart");
-      setCartData(cart);
+    let interval: NodeJS.Timeout;
+
+    const fetchCartData = async () => {
+      try {
+        const cart = await StorageService.getData("cart");
+        setCartData(cart);
+      } catch (error) {
+        console.error("Error fetching cart data:", error);
+      }
     };
-    getCart();
+
+    // Initial fetch
+    fetchCartData();
+
+    // Polling every 20 seconds
+    interval = setInterval(fetchCartData, 5000);
+
+    // Cleanup interval on unmount
+    return () => clearInterval(interval);
   }, []);
 
   // Function to determine if the current route matches the target
@@ -41,13 +60,15 @@ const Header: React.FC<HeaderProps> = ({ title, cart = false }) => {
         />
       ) : (
         <View style={tw`flex-row gap-2 items-center`}>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={tw`p-2 rounded-full bg-gray-200`}
-          >
-            <Ionicons name="chevron-back" size={21} color="black" />
-          </TouchableOpacity>
-          <OutfitSemibold style={tw`text-[#c48647] text-lg`}>
+          {back && (
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={tw`p-2 rounded-full bg-gray-200`}
+            >
+              <Ionicons name="chevron-back" size={21} color="black" />
+            </TouchableOpacity>
+          )}
+          <OutfitSemibold style={tw`text-[#c48647] text-xl`}>
             {title}
           </OutfitSemibold>
         </View>

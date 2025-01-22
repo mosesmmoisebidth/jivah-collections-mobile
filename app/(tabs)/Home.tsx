@@ -1,5 +1,6 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from "react";
 import {
+  Animated,
   Image,
   ScrollView,
   TextInput,
@@ -7,71 +8,122 @@ import {
   View,
   TouchableWithoutFeedback,
   Dimensions,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import tw from 'twrnc';
-import { StatusBar } from 'expo-status-bar';
-import { OutfitSemibold, OutfitText } from '@/components/StyledText';
-import { categories } from '@/constants/Categories';
-import ProductList from '@/components/app/ProductList';
-import Header from '@/components/app/Header';
-import { router } from 'expo-router';
-import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
-import { Entypo } from '@expo/vector-icons';
+  Pressable,
+  Text,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import tw from "twrnc";
+import { StatusBar } from "expo-status-bar";
+import { OutfitSemibold, OutfitText } from "@/components/StyledText";
+import { categories } from "@/constants/Categories";
+import ProductList from "@/components/app/ProductList";
+import Header from "@/components/app/Header";
+import { router } from "expo-router";
+import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import { Entypo, Feather } from "@expo/vector-icons";
+import ProductsForYou from "@/components/ProductsForYou";
+import Slideshow from "@/components/SlideShow";
+import { FlatList } from "react-native-gesture-handler";
 
 export default function Home() {
-  const [text, setText] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(
-    categories[0]?.name || null
-  );
+  const [text, setText] = useState("");
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
-  const [activeAdIndex, setActiveAdIndex] = useState(0); // Track active ad index
+  const [activeAdIndex, setActiveAdIndex] = useState(0);
 
   const sheetRef = useRef<BottomSheet>(null);
-  const snapPoints = ['60%', '80%'];
+  const snapPoints = ["60%", "80%"];
 
-  const { width: screenWidth } = Dimensions.get('window');
+  const { width: screenWidth } = Dimensions.get("window");
 
   const handleProductClick = useCallback((product: any) => {
     setSelectedProduct(product);
-    setIsBottomSheetOpen(true); // Open the BottomSheet and show overlay
-    sheetRef.current?.snapToIndex(0); // Open the BottomSheet
+    setIsBottomSheetOpen(true);
+    sheetRef.current?.snapToIndex(0);
   }, []);
 
   const handleClose = () => {
-    setIsBottomSheetOpen(false); // Close the BottomSheet and remove overlay
+    setIsBottomSheetOpen(false);
     setSelectedProduct(null);
   };
 
   const handleCategoryClick = (category: string) => {
-    setSelectedCategory(category);
+    router.push({
+      pathname: "/(tabs)/OurShop",
+      params: { category: category },
+    });
   };
 
   const adContent = [
     {
       id: 1,
-      name: 'Women Collection',
-      image: require('../../assets/images/hero.jpg'),
+      name: "Women Collection",
+      image: require("../../assets/images/hero.jpg"),
     },
-    // {
-    //   id: 2,
-    //   name: 'Men Collection',
-    //   image: require('../../assets/images/men.jpg'),
-    // },
-    // {
-    //   id: 3,
-    //   name: 'Children Collection',
-    //   image: require('../../assets/images/kids.jpg'),
-    // },
+    {
+      id: 2,
+      name: "Men Collection",
+      image: require("../../assets/images/men.jpg"),
+    },
+    {
+      id: 3,
+      name: "Children Collection",
+      image: require("../../assets/images/kids.jpg"),
+    },
   ];
 
-  const handleScroll = (event: any) => {
-    const contentOffsetX = event.nativeEvent.contentOffset.x;
-    const width = event.nativeEvent.layoutMeasurement.width;
-    const currentIndex = Math.floor(contentOffsetX / width);
-    setActiveAdIndex(currentIndex);
-  };
+  const renderAdItem = (item: any) => (
+    <View style={tw`relative w-full h-60 bg-gray-300 rounded-xl`}>
+      <Image
+        source={item.image}
+        style={[tw`w-full h-full rounded-xl`, { resizeMode: 'cover' }]}
+      />
+      <View style={tw`absolute bottom-4 left-4`}>
+        <Text style={tw`text-white text-xl font-semibold`}>{item.name}</Text>
+        <TouchableOpacity
+          onPress={() => console.log(`Navigating to ${item.name} collection`)}
+          style={tw`mt-2 p-3 bg-[#c48647] rounded-lg`}
+        >
+          <Text>Explore Now</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
+
+  const renderItem = (item: any) => (
+    <View
+      key={item.id}
+      style={tw`flex-row justify-between bg-gray-200 rounded-2xl  h-64 `}
+    >
+      <View
+        style={tw`w-[50%] bg-gray-200 rounded-2xl p-4 flex-col gap-2`}
+      >
+        <OutfitSemibold style={tw`text-xl`}>
+          {item.name}
+        </OutfitSemibold>
+        <OutfitText>A Whole New Look</OutfitText>
+        <TouchableOpacity
+          onPress={() => router.push("/OurShop")}
+          style={tw`p-4 font-semibold text-2xl bg-[#c48647] py-2 px-4 flex justify-center items-center rounded-lg`}
+        >
+          <OutfitText style={tw`text-white`}>SHOP NOW</OutfitText>
+        </TouchableOpacity>
+      </View>
+      <Image
+        source={item.image}
+        style={{
+          width: "50%",
+          height: "100%",
+          borderRadius: 10,
+        }}
+        resizeMode="cover"
+      />
+    </View>
+  );
+
+  const { width } = Dimensions.get("screen")
+
 
   return (
     <SafeAreaView style={tw`bg-white`}>
@@ -79,85 +131,67 @@ export default function Home() {
       <Header cart />
 
       {/* Main Content */}
-      <ScrollView style={tw`bg-white`}>
-        <View style={tw`mb-[5rem]`}>
-          <OutfitText style={tw`text-2xl py-4 pt-3 mx-6`}>
-            Find Clothes
-          </OutfitText>
-
-          {/* ad content */}
-          <View>
-            <ScrollView
-              horizontal
-              pagingEnabled
-              showsHorizontalScrollIndicator={false}
-              onScroll={handleScroll}
-              scrollEventThrottle={16}
-              contentContainerStyle={[
-                tw`flex-row justify-between`, // Layout styles go here
-              ]}
-              style={[
-                tw`bg-gray-200 rounded-2xl`,
-                { width: screenWidth - 40, marginHorizontal: 20 }, // Overall container styles
-              ]}
-            >
-              {adContent.map((ad) => (
-                <View
-                  key={ad.id}
-                  style={tw`mx-5 flex-row justify-between bg-gray-200 rounded-2xl w-[20rem]`}
+      <ScrollView style={tw`bg-white gap-3 `}>
+        <FlatList data={adContent} renderItem={({ item }: { item: any }) => {
+          return <View
+            key={item.id}
+            style={[tw` px-4  h-64 `, { width: width }]}
+          >
+            <View style={[tw`flex-row justify-between bg-gray-200  gap-4 rounded-2xl p-4   `]} >
+              <View
+                style={tw`w-[50%]  p-4 flex-col gap-2`}
+              >
+                <OutfitSemibold style={tw`text-xl`}>
+                  {item.name}
+                </OutfitSemibold>
+                <OutfitText>A Whole New Look</OutfitText>
+                <TouchableOpacity
+                  onPress={() => router.push("/OurShop")}
+                  style={tw`p-4 font-semibold text-2xl bg-[#c48647] py-2 px-4 flex justify-center items-center rounded-lg`}
                 >
-                  <View
-                    style={tw`w-[50%] bg-gray-200 rounded-2xl p-4 flex-col gap-2`}
-                  >
-                    <OutfitSemibold style={tw`text-xl`}>
-                      {ad.name}
-                    </OutfitSemibold>
-                    <OutfitText>A Whole New Look</OutfitText>
-                    <TouchableOpacity
-                      onPress={() => router.push('/OurShop')}
-                      style={tw`p-4 font-semibold text-2xl bg-[#c48647] py-2 px-4 flex justify-center items-center rounded-lg`}
-                    >
-                      <OutfitText
-                        onPress={() => router.push('/OurShop')}
-                        style={tw`text-white`}
-                      >
-                        SHOP NOW
-                      </OutfitText>
-                    </TouchableOpacity>
-                  </View>
-                  <Image
-                    source={ad.image}
-                    style={{
-                      width: '50%',
-                      height: '100%',
-                    }}
-                  />
-                </View>
-              ))}
-            </ScrollView>
-
-            {/* Dots indicator */}
-            <View style={tw`flex-row justify-center items-center mt-2`}>
-              {adContent.map((_, index) => (
-                <View
-                  key={index}
-                  style={[
-                    tw`w-2 h-2 rounded-full mx-1`,
-                    activeAdIndex === index
-                      ? tw`bg-[#c48647]`
-                      : tw`bg-gray-300`,
-                  ]}
-                />
-              ))}
+                  <OutfitText style={tw`text-white`}>SHOP NOW</OutfitText>
+                </TouchableOpacity>
+              </View>
+              <Image
+                source={item.image}
+                style={{
+                  width: "50%",
+                  height: "100%",
+                  borderRadius: 10,
+                }}
+                resizeMode="cover"
+              />
             </View>
           </View>
+        }} horizontal showsHorizontalScrollIndicator={false} pagingEnabled />
+        <View style={tw` px-3 gap-4`}>
+          <OutfitText style={tw`text-2xl `}>Find Clothes</OutfitText>
+
+
+
+          {/* Search Input */}
+          <Pressable
+            onPress={() => {
+              router.push({
+                pathname: "/(tabs)/OurShop",
+                params: { searchQuery: text },
+              });
+            }}
+          >
+            <View
+              style={tw`flex-row gap-2 items-center bg-gray-200 px-3 py-2.5 rounded-full`}
+            >
+              <Feather name="search" size={21} color="black" />
+              <OutfitText>Search...</OutfitText>
+            </View>
+          </Pressable>
 
           {/* Categories Section */}
-          <View style={tw`pt-5 mx-6`}>
+          <View style={tw``}>
             <View style={tw`flex-row justify-between items-center`}>
               <OutfitSemibold style={tw`text-lg`}>Categories</OutfitSemibold>
               <OutfitText
-                onPress={() => router.push('/Categories')}
+                onPress={() => router.push("/Categories")}
                 style={tw`text-lg`}
               >
                 See All
@@ -165,28 +199,23 @@ export default function Home() {
             </View>
             <ScrollView
               horizontal
-              contentContainerStyle={tw`flex-row items-center gap-2 py-3`}
+              contentContainerStyle={tw`flex-row items-center gap-4 py-3`}
               showsHorizontalScrollIndicator={false}
             >
               {categories.slice(0, 5).map((category) => (
                 <TouchableOpacity
                   key={category.name}
                   onPress={() => handleCategoryClick(category.name)}
-                  style={[
-                    tw`py-2 px-2 rounded-full border-gray-300`,
-                    selectedCategory === category.name
-                      ? tw`bg-[#c48647]`
-                      : tw`bg-white border`,
-                  ]}
+                  style={[tw` flex items-center justify-center`]}
                 >
-                  <OutfitText
+                  <View
                     style={[
-                      tw`text-sm font-semibold`,
-                      selectedCategory === category.name
-                        ? tw`text-white`
-                        : tw`text-black`,
+                      tw`mb-2 py-3 px-4 rounded-full border-gray-300`, tw`bg-white border`,
                     ]}
                   >
+                    {category.icon}
+                  </View>
+                  <OutfitText style={[tw`text-sm font-semibold`]}>
                     {category.name}
                   </OutfitText>
                 </TouchableOpacity>
@@ -200,12 +229,14 @@ export default function Home() {
             category="bestselling"
             
           /> */}
-          <ProductList
-            title="Latest Products"
-            category="latest"
-            
-          />
+
         </View>
+        <ProductsForYou onClickProduct={(id) => {
+          router.push({
+            pathname: "/product/[id]",
+            params: { id: id },
+          })
+        }} />
       </ScrollView>
 
       {/* Overlay background */}
@@ -230,7 +261,7 @@ export default function Home() {
                 {selectedProduct.name}
               </OutfitSemibold>
               <TouchableOpacity
-                onPress={() => router.push('/Cart')}
+                onPress={() => router.push("/Cart")}
                 style={tw`p-2 rounded-full shadow-sm bg-[#c48647]`}
               >
                 <Entypo name="shopping-cart" size={20} color="white" />

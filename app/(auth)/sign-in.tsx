@@ -83,7 +83,7 @@ const SignIn = () => {
   return (
     <ScrollView>
       <SafeAreaView>
-        <View style={tw`flex-col gap-5 justify-center px-7 py-20 h-full`}>
+        <View style={tw`flex-col gap-5 justify-center px-4 py-20 h-full`}>
           <OutfitBold style={tw`text-2xl`}>Login</OutfitBold>
 
           <View style={tw`flex-col gap-3 py-6`}>
@@ -142,27 +142,26 @@ const SignIn = () => {
               <Separator />
             </View>
 
-            <View style={tw`w-full flex-row justify-around gap-4`}>
-              <View style={tw`py-4 px-6 rounded-lg border border-gray-300`}>
+            <View style={tw`w-full gap-4`}>
+              <View
+                style={tw`py-4 px-6 rounded-full border border-gray-300 flex flex-row items-center justify-center gap-3`}
+              >
                 <Image
                   source={AppImages.fbIcon}
                   resizeMode="contain"
                   style={tw`w-5 h-5`}
                 />
+                <OutfitText>Continue with Facebook</OutfitText>
               </View>
-              <View style={tw`py-4 px-6 rounded-lg border border-gray-300`}>
+              <View
+                style={tw`py-4 px-6 rounded-full border border-gray-300  flex flex-row items-center justify-center gap-3`}
+              >
                 <Image
                   source={AppImages.googleIcon}
                   resizeMode="contain"
                   style={tw`w-5 h-5`}
                 />
-              </View>
-              <View style={tw`py-4 px-6 rounded-lg border border-gray-300`}>
-                <Image
-                  source={AppImages.appleIcon}
-                  resizeMode="contain"
-                  style={tw`w-5 h-5`}
-                />
+                <OutfitText>Continue with Google</OutfitText>
               </View>
             </View>
 

@@ -28,7 +28,7 @@ export default function RootLayout() {
   });
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isAppReady, setIsAppReady] = useState(false); // New state to track when the app is fully ready
   const router = useRouter();
 
   useEffect(() => {
@@ -39,8 +39,8 @@ export default function RootLayout() {
       } catch (error) {
         console.error("Error checking authentication:", error);
       } finally {
-        setIsLoading(false); // Authentication check completed
-        if (fontsLoaded) await SplashScreen.hideAsync(); // Hide splash screen
+        setIsAppReady(true); // Indicate that the app is ready to render
+        if (fontsLoaded) await SplashScreen.hideAsync(); // Hide splash screen after app is ready
       }
     };
 
@@ -50,22 +50,21 @@ export default function RootLayout() {
   }, [fontsLoaded]);
 
   useEffect(() => {
-    if (!isLoading) {
-      // Navigate only after loading and authentication checks are complete
+    if (isAppReady) {
       if (isAuthenticated) {
         router.replace("/(tabs)/Home");
       } else {
         router.replace("/(auth)/sign-in");
       }
     }
-  }, [isAuthenticated, isLoading]);
+  }, [isAuthenticated, isAppReady]);
 
-  if (!fontsLoaded || isLoading) return null;
+  if (!fontsLoaded || !isAppReady) return null; // Wait until fonts are loaded and app is ready
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack>
+        <Stack initialRouteName={isAuthenticated ? "(tabs)" : "(auth)"}>
           <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="About" options={{ headerShown: false }} />

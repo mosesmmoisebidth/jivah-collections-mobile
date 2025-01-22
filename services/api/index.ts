@@ -2,6 +2,7 @@ import axios, {
   AxiosInstance,
   AxiosRequestConfig,
   InternalAxiosRequestConfig,
+  AxiosError,
 } from "axios";
 import StorageService from "../storage";
 
@@ -31,11 +32,33 @@ class ApiService {
     }
   }
 
+  private static async refreshAccessToken(): Promise<void> {
+    try {
+      const refreshToken = await StorageService.getData<string>("refreshToken");
+      if (!refreshToken) {
+        throw new Error("No refresh token available");
+      }
+
+      const response = await axios.post(`${BASE_URL}/auth/refresh-token`, {
+        refreshToken,
+      });
+
+      const newAccessToken = response.data.payload.tokens.accessToken;
+
+      if (newAccessToken) {
+        await StorageService.saveData("accessToken", newAccessToken);
+        this.setAuthorizedApiToken();
+      }
+    } catch (error: any) {
+      console.error("Error refreshing access token:", error.response?.data);
+      throw error; // Re-throw the error to handle it further if needed
+    }
+  }
+
   private static setAuthorizedApiInterceptors(): void {
     this.authorizedApi.interceptors.request.use(
       async (config: InternalAxiosRequestConfig) => {
         const token = await StorageService.getData<string>("accessToken");
-        console.log("Using token for authorized request:", token);
         if (token) {
           config.headers["Authorization"] = `Bearer ${token}`;
         } else {
@@ -44,6 +67,35 @@ class ApiService {
         return config;
       },
       (error) => Promise.reject(error)
+    );
+
+    this.authorizedApi.interceptors.response.use(
+      (response) => response,
+      async (error: AxiosError) => {
+        console.log("Going to print the error message")
+        //@ts-ignore
+        console.log(error.response?.data?.message)
+        if (
+          error.response?.status === 401 &&
+          //@ts-ignore
+          error.response?.data?.message?.toLowerCase().includes("expired")
+        ) {
+          try {
+            // Refresh the token
+            await this.refreshAccessToken();
+            const originalRequest = error.config;
+            if (originalRequest) {
+              await this.setAuthorizedApiToken();
+              return this.authorizedApi(originalRequest);
+            }
+          } catch (refreshError) {
+            // Handle token refresh failure
+            console.error("Token refresh failed:", refreshError);
+            return Promise.reject(refreshError);
+          }
+        }
+        return Promise.reject(error);
+      }
     );
   }
 

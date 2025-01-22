@@ -46,7 +46,7 @@ const Checkout = () => {
 
   return (
     <SafeAreaView style={tw`bg-white flex-1 pt-6`}>
-      <Header title="Checkout" />
+      <Header title="Checkout"  back/>
 
       <ScrollView style={tw`bg-white pt-3`}>
         <View style={tw`mb-[2rem] px-5 flex-col gap-10`}>

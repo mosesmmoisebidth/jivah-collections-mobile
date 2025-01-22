@@ -9,22 +9,45 @@ import {
   Platform,
   TouchableWithoutFeedback,
   ActivityIndicator,
+  TextInput,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Header from "@/components/app/Header";
 import tw from "twrnc";
-import ProductList from "@/components/app/ProductList";
-import Separator from "@/components/app/Separator";
+import ProductService from "@/services/api/product";
 import { OutfitSemibold, OutfitText } from "@/components/StyledText";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { router } from "expo-router";
-import { Product } from "@/utils/types/product";
-import ProductService from "@/services/api/product";
+import Separator from "@/components/app/Separator";
+
+// Product DTO definition
+interface ProductDTO {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  product_name: string;
+  short_description: string[];
+  product_description: string[];
+  regular_price: number;
+  sale_price: number;
+  discount_price: number;
+  category: string;
+  from_date: string;
+  to_date: string;
+  product_image: string;
+  product_gallery: string[];
+  tags: string[];
+  in_stock: boolean;
+  sku: string;
+  isbn: string;
+  track_stock: boolean;
+  quantity: number;
+  store_threshold: number;
+}
 
 const ProductDetail: React.FC = () => {
   const navigation = useNavigation();
-
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false,
@@ -35,38 +58,30 @@ const ProductDetail: React.FC = () => {
   //@ts-ignore
   const { id } = route.params;
   const productId = String(id);
-  const [product, setProduct] = useState<Product | null>(null); // Define state to store product details
+  const [product, setProduct] = useState<ProductDTO | null>(null);
   const [loading, setLoading] = useState(true);
   const [addToCartLoading, setAddToCardLoading] = useState(false);
   const [mainImage, setMainImage] = useState<string>("");
+  const [quantity, setQuantity] = useState(1);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+  const [selectedTab, setSelectedTab] = useState("info"); // State for switching between "Info" and "Reviews"
+  const [reviewText, setReviewText] = useState("");
 
   const sheetRef = React.useRef<BottomSheet>(null);
   const snapPoints = ["60%", "90%"];
 
   const addToCart = async () => {
     setAddToCardLoading(true);
-    await ProductService.addToCart(productId, 1);
+    await ProductService.addToCart(productId, quantity);
     setAddToCardLoading(false);
-  };
-
-  const handleProductClick = (product: any) => {
-    setSelectedProduct(product);
-    setIsBottomSheetOpen(true);
-    sheetRef.current?.snapToIndex(0);
-  };
-
-  const handleClose = () => {
-    setIsBottomSheetOpen(false);
-    setSelectedProduct(null);
   };
 
   const fetchProduct = async () => {
     try {
-      const productData = await ProductService.getProductById(productId); // Use ProductsService
+      const productData = await ProductService.getProductById(productId);
       setProduct(productData);
-      setMainImage(productData.product_image); // Set initial image
+      setMainImage(productData.product_image);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -77,6 +92,29 @@ const ProductDetail: React.FC = () => {
   useEffect(() => {
     fetchProduct();
   }, [productId]);
+
+  const handleIncreaseQuantity = () => {
+    if (quantity < (product?.quantity || 0)) {
+      setQuantity(quantity + 1);
+    }
+  };
+
+  const handleDecreaseQuantity = () => {
+    if (quantity > 1) {
+      setQuantity(quantity - 1);
+    }
+  };
+
+  const handleTabChange = (tab: "info" | "reviews") => {
+    setSelectedTab(tab);
+  };
+
+  const handleReviewSubmit = () => {
+    if (reviewText.trim()) {
+      // Submit review logic here
+      setReviewText("");
+    }
+  };
 
   if (loading) {
     return (
@@ -110,9 +148,10 @@ const ProductDetail: React.FC = () => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-      <Header title={product.product_name} />
+      <Header title={product.product_name} back cart />
       <ScrollView style={{ backgroundColor: "white" }}>
-        <View style={{ marginBottom: 80, paddingVertical: 16 }}>
+        <View style={{ marginBottom: 120 }}>
+          {/* Main Image */}
           <View
             style={{
               padding: 16,
@@ -131,74 +170,220 @@ const ProductDetail: React.FC = () => {
                 borderColor: "#dcdcdc",
               }}
             />
-          </View>
-          <View style={{ paddingHorizontal: 16, marginTop: 16 }}>
-            <OutfitSemibold style={{ fontSize: 18 }}>
-              {product.product_name}
-            </OutfitSemibold>
-            <View
-              style={{
-                flexDirection: "row",
-                gap: 20,
-                alignItems: "center",
-                marginVertical: 10,
-              }}
-            >
-              <OutfitText style={{ color: "#777" }}>
-                ${product.regular_price}
-              </OutfitText>
-              <OutfitText style={{ fontSize: 16, color: "#777" }}>
-                Category: {product.category}
-              </OutfitText>
+            <View style={tw`flex px-5 items-center justify-center`}>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={{ flexDirection: "row", gap: 10, marginTop: 10 }}
+              >
+                {[...product.product_gallery, product.product_image]?.map(
+                  (image, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => setMainImage(image)}
+                    >
+                      <Image
+                        source={{ uri: image }}
+                        style={{
+                          width: 80,
+                          height: 80,
+                          borderRadius: 12,
+                          borderWidth: 1,
+                          borderColor: "#e1e1e1",
+                        }}
+                      />
+                    </TouchableOpacity>
+                  )
+                )}
+              </ScrollView>
             </View>
-            <OutfitText>{product.product_description?.join(" ")}</OutfitText>
+          </View>
 
-            <Separator />
-            <OutfitSemibold>Other Images:</OutfitSemibold>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={{ flexDirection: "row", gap: 10 }}
-            >
-              {product.product_gallery?.map((image, index) => (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() => setMainImage(image)}
+          {/* Gallery Images */}
+
+          {/* Product Details Tabs */}
+          <View style={{ marginTop: 20, marginHorizontal: 16 }}>
+            <View style={{ flexDirection: "row" }}>
+              <TouchableOpacity
+                onPress={() => handleTabChange("info")}
+                style={{
+                  flex: 1,
+                  padding: 12,
+                  backgroundColor:
+                    selectedTab === "info" ? "#c48647" : "#f4f4f4",
+                  alignItems: "center",
+                  borderTopLeftRadius: 12,
+                  borderBottomLeftRadius: 12,
+                }}
+              >
+                <OutfitText
+                  style={{ color: selectedTab === "info" ? "white" : "black" }}
                 >
+                  Info
+                </OutfitText>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => handleTabChange("reviews")}
+                style={{
+                  flex: 1,
+                  padding: 12,
+                  backgroundColor:
+                    selectedTab === "reviews" ? "#c48647" : "#f4f4f4",
+                  alignItems: "center",
+                  borderTopRightRadius: 12,
+                  borderBottomRightRadius: 12,
+                }}
+              >
+                <OutfitText
+                  style={{
+                    color: selectedTab === "reviews" ? "white" : "black",
+                  }}
+                >
+                  Reviews
+                </OutfitText>
+              </TouchableOpacity>
+            </View>
+
+            {/* Info Tab Content */}
+            {selectedTab === "info" && (
+              <View style={{ paddingTop: 20 }}>
+                {product.product_description?.map((desc, idx) => (
+                  <OutfitText key={idx}>{desc}</OutfitText>
+                ))}
+                <Separator />
+                <OutfitText>Tags: {product.tags?.join(", ")}</OutfitText>
+                <OutfitText>SKU: {product.sku}</OutfitText>
+                <OutfitText>ISBN: {product.isbn}</OutfitText>
+                <OutfitText>
+                  Remaining Stock: {product.quantity} items
+                </OutfitText>
+              </View>
+            )}
+
+            {/* Reviews Tab Content */}
+            {selectedTab === "reviews" && (
+              <View style={{ paddingTop: 20 }}>
+                {/* Static Reviews */}
+                <View style={tw`flex-row items-center p-4 `}>
                   <Image
-                    source={{ uri: image }}
+                    source={{ uri: "https://via.placeholder.com/40" }} // Add user avatar URL
                     style={{
-                      width: 80,
-                      height: 80,
-                      borderRadius: 12,
-                      borderWidth: 1,
-                      borderColor: "#e1e1e1",
+                      width: 40,
+                      height: 40,
+                      borderRadius: 20,
+                      marginRight: 12,
                     }}
                   />
+                  <View style={{ flex: 1 }}>
+                    <OutfitSemibold style={{ fontSize: 14 }}>
+                      John Doe
+                    </OutfitSemibold>
+                    <OutfitText style={{ fontSize: 12, color: "#555" }}>
+                      This product is awesome!
+                    </OutfitText>
+                  </View>
+                </View>
+
+                {/* Review 2 */}
+                <View style={tw`flex-row items-center p-4 `}>
+                  <Image
+                    source={{ uri: "https://via.placeholder.com/40" }} // Add user avatar URL
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 20,
+                      marginRight: 12,
+                    }}
+                  />
+                  <View style={{ flex: 1 }}>
+                    <OutfitSemibold style={{ fontSize: 14 }}>
+                      Jane Smith
+                    </OutfitSemibold>
+                    <OutfitText style={{ fontSize: 12, color: "#555" }}>
+                      Great quality and price.
+                    </OutfitText>
+                  </View>
+                </View>
+
+                {/* Review 3 */}
+                <View style={tw`flex-row items-center p-4 `}>
+                  <Image
+                    source={{ uri: "https://via.placeholder.com/40" }} // Add user avatar URL
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 20,
+                      marginRight: 12,
+                    }}
+                  />
+                  <View style={{ flex: 1 }}>
+                    <OutfitSemibold style={{ fontSize: 14 }}>
+                      Michael Lee
+                    </OutfitSemibold>
+                    <OutfitText style={{ fontSize: 12, color: "#555" }}>
+                      Worth every penny.
+                    </OutfitText>
+                  </View>
+                </View>
+                <Separator />
+
+                {/* Review Input */}
+                <TextInput
+                  style={{
+                    borderWidth: 1,
+                    borderColor: "#dcdcdc",
+                    padding: 10,
+                    borderRadius: 100,
+                    marginBottom: 16,
+                  }}
+                  placeholder="Write a review..."
+                  value={reviewText}
+                  onChangeText={setReviewText}
+                />
+                <TouchableOpacity
+                  onPress={handleReviewSubmit}
+                  style={{
+                    backgroundColor: "#c48647",
+                    paddingVertical: 12,
+                    borderRadius: 100,
+                    alignItems: "center",
+                  }}
+                >
+                  <OutfitText style={{ color: "white", fontSize: 16 }}>
+                    Submit Review
+                  </OutfitText>
                 </TouchableOpacity>
-              ))}
-            </ScrollView>
+              </View>
+            )}
+          </View>
+        </View>
+      </ScrollView>
 
-            <Separator />
-            {/* <TouchableOpacity
-              onPress={addToCart}
-              style={{
-                backgroundColor: "#c48647",
-                paddingVertical: 16,
-                borderRadius: 8,
-                alignItems: "center",
-              }}
-              disabled={addToCartLoading}
-            >
-              <OutfitText style={{ color: "white", fontSize: 18 }}>
-                Add to Cart
-              </OutfitText>
-            </TouchableOpacity> */}
-
+      {/* Add to Cart Section */}
+      {product.quantity > 0 && (
+        <View
+          style={tw`absolute bottom-0 left-0 right-0 p-4 bg-white shadow-lg`}
+        >
+          <View style={tw`flex-row items-center justify-between gap-4`}>
+            <View style={tw`flex-row items-center`}>
+              <TouchableOpacity
+                onPress={handleDecreaseQuantity}
+                style={tw`w-7 h-7 flex items-center justify-center  bg-gray-200 rounded-full`}
+              >
+                <OutfitText>-</OutfitText>
+              </TouchableOpacity>
+              <Text style={tw`p-4`}>{quantity}</Text>
+              <TouchableOpacity
+                onPress={handleIncreaseQuantity}
+                style={tw`w-7 h-7 flex items-center justify-center  bg-gray-200 rounded-full`}
+              >
+                <OutfitText>+</OutfitText>
+              </TouchableOpacity>
+            </View>
             <TouchableOpacity
               onPress={addToCart}
               disabled={addToCartLoading}
-              style={tw`p-4 font-semibold text-2xl ${
+              style={tw`p-4 font-semibold text-2xl flex-grow ${
                 addToCartLoading ? "bg-gray-400" : "bg-[#c48647]"
               } flex justify-center items-center rounded-full`}
             >
@@ -217,63 +402,6 @@ const ProductDetail: React.FC = () => {
             </TouchableOpacity>
           </View>
         </View>
-        {/* <ProductList
-          title="Latest Products"
-          tag="bestselling"
-          onProductClick={() => console.log("hello")}
-        /> */}
-      </ScrollView>
-
-      {isBottomSheetOpen && (
-        <TouchableWithoutFeedback onPress={handleClose}>
-          <View
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
-            }}
-          />
-        </TouchableWithoutFeedback>
-      )}
-
-      {selectedProduct && (
-        <BottomSheet
-          ref={sheetRef}
-          snapPoints={snapPoints}
-          enablePanDownToClose
-          onClose={handleClose}
-          backgroundStyle={{ backgroundColor: "white" }}
-        >
-          <BottomSheetView style={{ padding: 16 }}>
-            <OutfitSemibold style={{ fontSize: 18 }}>
-              {selectedProduct.product_name}
-            </OutfitSemibold>
-            <Image
-              source={{ uri: selectedProduct.product_image }}
-              style={{ width: "100%", height: 200, borderRadius: 12 }}
-            />
-            <OutfitText>
-              {selectedProduct.product_description?.join(" ")}
-            </OutfitText>
-            <TouchableOpacity
-              onPress={() => router.push("/Cart")}
-              style={{
-                backgroundColor: "#c48647",
-                paddingVertical: 16,
-                borderRadius: 8,
-                alignItems: "center",
-                marginTop: 16,
-              }}
-            >
-              <OutfitText style={{ color: "white", fontSize: 18 }}>
-                View Cart
-              </OutfitText>
-            </TouchableOpacity>
-          </BottomSheetView>
-        </BottomSheet>
       )}
     </SafeAreaView>
   );

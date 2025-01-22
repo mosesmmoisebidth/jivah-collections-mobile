@@ -57,7 +57,7 @@ const AppTextInput: React.FC<AppTextInputProps> = ({
 
       {["text", "textarea", "password"].includes(type) && (
         <View
-          style={tw`flex-row items-center w-full px-4 py-2.5 gap-4 rounded-full bg-slate-200`}
+          style={tw`flex-row items-center w-full px-4 py-2 gap-4 rounded-full bg-slate-200`}
         >
           {prefixIcon && <View>{prefixIcon}</View>}
 

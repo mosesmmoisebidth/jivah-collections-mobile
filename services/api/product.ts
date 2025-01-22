@@ -158,6 +158,8 @@ class ProductService {
       const response = await ApiService.authorized.patch(
         `/products/product/remove-cart/${id}`
       );
+      const cart = await this.viewCart();
+      await StorageService.updateData("cart", cart);
       return response.data;
     } catch (error) {
       Toast.show({
@@ -174,6 +176,8 @@ class ProductService {
       const response = await ApiService.authorized.patch(
         `/products/product/update-cart-quantity/increase/${id}`
       );
+      const cart = await this.viewCart();
+      await StorageService.updateData("cart", cart);
       return response.data;
     } catch (error) {
       Toast.show({
@@ -190,6 +194,8 @@ class ProductService {
       const response = await ApiService.authorized.patch(
         `/products/product/update-cart-quantity/decrease/${id}`
       );
+      const cart = await this.viewCart();
+      await StorageService.updateData("cart", cart);
       return response.data;
     } catch (error) {
       Toast.show({
@@ -206,9 +212,7 @@ class ProductService {
       const response = await ApiService.authorized.get(
         "/products/product/cart/view"
       );
-
       console.log(response.data.payload);
-
       return response.data.payload.cart;
     } catch (error: any) {
       console.log(error.response.data);
