@@ -1,43 +1,97 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { Platform } from 'react-native';
-
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { Tabs, Redirect } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { Platform, View } from "react-native";
+import { HapticTab } from "@/components/HapticTab";
+import { IconSymbol } from "@/components/ui/IconSymbol";
+import TabBarBackground from "@/components/ui/TabBarBackground";
+import { Entypo, MaterialIcons } from "@expo/vector-icons";
+import StorageService from "@/services/storage";
+import { WaveIndicator } from "react-native-indicators";
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const [isAuthenticated, setIsAuthenticated] = useState<any>(null);
+
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      try {
+        const accessToken = await StorageService.getData("accessToken");
+        setIsAuthenticated(!!accessToken);
+      } catch (error) {
+        console.error("Error checking authentication:", error);
+      }
+    };
+
+    checkAuthStatus();
+  }, []);
+
+  if (isAuthenticated === null) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <WaveIndicator color="#c48647" size={60} />
+      </View>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Redirect href="/(auth)/sign-in" />;
+  }
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: "#c48647",
         headerShown: false,
-        tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
+        tabBarHideOnKeyboard: true,
         tabBarStyle: Platform.select({
           ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
+            position: "absolute",
+            paddingVertical: 10,
+            paddingHorizontal: 10,
+            height: 60,
           },
-          default: {},
+          default: {
+            paddingVertical: 10,
+            paddingHorizontal: 10,
+            height: 60,
+          },
         }),
-      }}>
+      }}
+    >
       <Tabs.Screen
-        name="index"
+        name="Home"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: "Home",
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons name="home" size={28} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="OurShop"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: "Our Shop",
+          tabBarIcon: ({ color }) => (
+            <Entypo name="shop" size={28} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="Categories"
+        options={{
+          title: "Categories",
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons name="category" size={28} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="Account"
+        options={{
+          title: "Account",
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons name="account-circle" size={28} color={color} />
+          ),
         }}
       />
     </Tabs>

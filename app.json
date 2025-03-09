@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "jivah-mobile",
-    "slug": "jivah-mobile",
+    "name": "jivah",
+    "slug": "jivah",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -9,18 +9,27 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "useNextNotificationsApi": true
     },
     "android": {
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+        "foregroundImage": "./assets/images/adaptive-icon.jpg",
+        "backgroundColor": "#111312"
+      },
+      "package": "com.mugisha189.jivah"
     },
     "web": {
       "bundler": "metro",
       "output": "static",
       "favicon": "./assets/images/favicon.png"
+    },
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "imageWidth": 200,
+      "resizeMode": "cover",
+      "backgroundColor": "#111312"
     },
     "plugins": [
       "expo-router",

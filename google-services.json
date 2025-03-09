@@ -1,0 +1,29 @@
+{
+    "project_info": {
+      "project_number": "897904029722",
+      "project_id": "jivahcollections-notifications",
+      "storage_bucket": "jivahcollections-notifications.firebasestorage.app"
+    },
+    "client": [
+      {
+        "client_info": {
+          "mobilesdk_app_id": "1:897904029722:android:c388cef88959f15d2161a3",
+          "android_client_info": {
+            "package_name": "com.jivah.jivahcollections"
+          }
+        },
+        "oauth_client": [],
+        "api_key": [
+          {
+            "current_key": "AIzaSyAezJeI8P6yCqyoikA2pc7jmUXpZu6rZbI"
+          }
+        ],
+        "services": {
+          "appinvite_service": {
+            "other_platform_oauth_client": []
+          }
+        }
+      }
+    ],
+    "configuration_version": "1"
+  }
