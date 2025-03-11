@@ -11,7 +11,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState, useCallback } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import "react-native-reanimated";
+// import "react-native-reanimated";
 import Toast from "react-native-toast-message";
 import * as Notifications from "expo-notifications";
 

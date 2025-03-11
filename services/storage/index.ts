@@ -42,6 +42,14 @@ class StorageService {
       throw new Error("Failed to update data");
     }
   }
+
+  static async clearAll(): Promise<void> {
+    try {
+      await AsyncStorage.clear();
+    } catch (error) {
+      throw new Error("Failed to clear storage");
+    }
+  }
 }
 
 export default StorageService;

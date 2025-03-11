@@ -5,12 +5,14 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
+    "developmentClient": true,
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "useNextNotificationsApi": true
+      "useNextNotificationsApi": true,
+      "bundleIdentifier": "com.mugisha189.jivah"
     },
     "android": {
       "googleServicesFile": "./google-services.json",

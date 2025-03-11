@@ -53,7 +53,7 @@ const Account = () => {
           onClick: async () => {
             setIsLoggingOut(true);
             await AuthService.logout(() => {
-              router.replace("/(auth)/sign-in");
+              router.replace("/(auth)");
             });
             setIsLoggingOut(false);
           },

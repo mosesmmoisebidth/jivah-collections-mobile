@@ -9,7 +9,11 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import tw from "twrnc";
-import { OutfitBold, OutfitSemibold, OutfitText } from "@/components/StyledText";
+import {
+  OutfitBold,
+  OutfitSemibold,
+  OutfitText,
+} from "@/components/StyledText";
 import TextInput from "@/components/app/TextInput";
 import { Redirect, router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -25,7 +29,7 @@ const SignIn = () => {
     const checkAuthStatus = async () => {
       try {
         const accessToken = await StorageService.getData("accessToken");
-        setIsAuthenticated(!!accessToken);
+        setIsAuthenticated(accessToken != null);
       } catch (error) {
         console.error("Error checking authentication:", error);
       }
@@ -33,7 +37,6 @@ const SignIn = () => {
 
     checkAuthStatus();
   }, []);
-
 
   const [formData, setFormData] = useState({
     email: "",
@@ -100,7 +103,7 @@ const SignIn = () => {
     });
   };
 
-    if (isAuthenticated === null) {
+  if (isAuthenticated === null) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <WaveIndicator color="#c48647" size={60} />
@@ -108,7 +111,7 @@ const SignIn = () => {
     );
   }
 
-  if (!isAuthenticated) {
+  if (isAuthenticated) {
     return <Redirect href="/(tabs)/Home" />;
   }
 
@@ -139,7 +142,9 @@ const SignIn = () => {
               onChangeText={(value) => handleInputChange("password", value)}
               type="password"
               label={true}
-              prefixIcon={<Ionicons name="lock-closed" size={20} color="gray" />}
+              prefixIcon={
+                <Ionicons name="lock-closed" size={20} color="gray" />
+              }
               errorMessage={errors.password}
             />
           </View>
@@ -148,10 +153,18 @@ const SignIn = () => {
             <TouchableOpacity
               onPress={handleLogin}
               disabled={isLoading}
-              style={tw`p-4 font-semibold text-2xl ${isLoading ? "bg-gray-400" : "bg-[#c48647]"} flex justify-center items-center rounded-full`}
+              style={tw`p-4 font-semibold text-2xl ${
+                isLoading ? "bg-gray-400" : "bg-[#c48647]"
+              } flex justify-center items-center rounded-full`}
             >
               <View style={tw`flex-row items-center`}>
-                {isLoading && <ActivityIndicator size="small" color="white" style={tw`mr-2`} />}
+                {isLoading && (
+                  <ActivityIndicator
+                    size="small"
+                    color="white"
+                    style={tw`mr-2`}
+                  />
+                )}
                 <OutfitText style={tw`text-white`}>
                   {isLoading ? "Signing in..." : "Login"}
                 </OutfitText>
@@ -175,14 +188,21 @@ const SignIn = () => {
               <TouchableOpacity
                 style={tw`py-4 px-6 rounded-full border border-gray-300 flex flex-row items-center justify-center gap-3`}
               >
-                <Image source={AppImages.googleIcon} resizeMode="contain" style={tw`w-5 h-5`} />
+                <Image
+                  source={AppImages.googleIcon}
+                  resizeMode="contain"
+                  style={tw`w-5 h-5`}
+                />
                 <OutfitText>Continue with Google</OutfitText>
               </TouchableOpacity>
             </View>
 
             <OutfitText style={tw`text-center mt-10`}>
               Don't have an account?{" "}
-              <OutfitSemibold style={tw`text-[#c48647]`} onPress={() => router.push("/(auth)/sign-up")}>
+              <OutfitSemibold
+                style={tw`text-[#c48647]`}
+                onPress={() => router.push("/(auth)/sign-up")}
+              >
                 Create One
               </OutfitSemibold>
             </OutfitText>

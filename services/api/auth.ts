@@ -217,10 +217,7 @@ class AuthService {
   static async logout(onSuccess?: () => void): Promise<any> {
     try {
       // const response = await ApiService.authorized.post("/auth/logout");
-      await StorageService.deleteData("user");
-      await StorageService.deleteData("cart");
-      await StorageService.deleteData("accessToken");
-      await StorageService.deleteData("refreshToken");
+      await StorageService.clearAll();
       if (onSuccess) onSuccess();
       // Show success toast message
       Toast.show({
