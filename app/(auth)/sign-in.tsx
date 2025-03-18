@@ -118,7 +118,11 @@ const SignIn = () => {
   return (
     <ScrollView>
       <SafeAreaView>
-        <View style={tw`flex-col gap-5 justify-center px-4 py-20 h-full`}>
+        <View style={tw`flex-col gap-5 justify-center items-center px-4 py-20 h-full`}>
+          <Image
+            source={require("../../assets/images/logo.png")}
+            style={{ width: 100, height: 100 }}
+          />
           <OutfitBold style={tw`text-3xl text-center`}>Login</OutfitBold>
           <OutfitSemibold style={tw`text-gray-500 text-center px-4`}>
             Enter your credentials to access your account securely.
@@ -184,7 +188,7 @@ const SignIn = () => {
               <View style={styles.line} />
             </View>
 
-            <View style={tw`w-full gap-4`}>
+            <View style={tw`gap-4`}>
               <TouchableOpacity
                 style={tw`py-4 px-6 rounded-full border border-gray-300 flex flex-row items-center justify-center gap-3`}
               >

@@ -5,7 +5,7 @@ import {
   Register,
   UpdateProfile,
 } from "../../utils/types/auth";
-import Toast from "react-native-toast-message"; // Import the toast message library
+import Toast from "react-native-toast-message";
 import StorageService from "../storage";
 import ProductService from "./product";
 
@@ -13,22 +13,18 @@ class AuthService {
   static async login(credentials: Login, onSuccess?: () => void): Promise<any> {
     try {
       const response = await ApiService.unauthorized.post("/auth/login", {
-        username: credentials.email,
+        identifier: credentials.email,
         password: credentials.password,
       });
       await StorageService.saveData(
         "accessToken",
-        response.data.payload.tokens.accessToken
+        response.data.data.accessToken
       );
       await StorageService.saveData(
         "refreshToken",
-        response.data.payload.tokens.refreshToken
+        response.data.data.refreshToken
       );
-      await StorageService.saveData("user", response.data.payload.user);
-      const cart = await ProductService.viewCart();
-      await StorageService.saveData("cart", cart);
-      if (onSuccess) onSuccess(); // Call the success callback if provided
-      // Show success toast message
+      if (onSuccess) onSuccess();
       Toast.show({
         type: "success",
         position: "top",
@@ -62,13 +58,13 @@ class AuthService {
       console.log(response.data);
       await StorageService.saveData(
         "accessToken",
-        response.data.payload.tokens.accessToken
+        response.data.data.accessToken
       );
       await StorageService.saveData(
         "refreshToken",
-        response.data.payload.tokens.refreshToken
+        response.data.data.refreshToken
       );
-      await StorageService.saveData("user", response.data.payload.user);
+      await StorageService.saveData("user", response.data.data.user);
       if (onSuccess) onSuccess(); // Call the success callback if provided
       // Show success toast message
       Toast.show({
@@ -177,7 +173,7 @@ class AuthService {
     onSuccess?: () => void
   ): Promise<any> {
     try {
-      const response = await ApiService.authorized.post(
+      const response = await ApiService.authorized.patch(
         "/users/change/password",
         passwords
       );
@@ -241,12 +237,11 @@ class AuthService {
 
   static async getProfile(onSuccess?: () => void): Promise<any> {
     try {
-      const user = await StorageService.getData("user");
-      // const response = await ApiService.authorized.get("/users/get-profile");
+      const response = await ApiService.authorized.get("/users/profile");
       // if (onSuccess) onSuccess(); // Call the success callback if provided
       // console.log(response.data.payload.user);
-      console.log(user);
-      return user;
+      // console.log(user);
+      return response.data;
     } catch (error) {
       console.log(error);
       // Show error toast message
@@ -259,52 +254,52 @@ class AuthService {
     }
   }
 
-  static async updateProfile(
-    formData: UpdateProfile,
-    onSuccess?: () => void
-  ): Promise<any> {
-    try {
-      const user = await StorageService.getData("user");
-      const formDataToSend = new FormData();
-      formDataToSend.append("firstName", formData.firstName);
-      formDataToSend.append("lastName", formData.lastName);
-      formDataToSend.append("email", formData.email);
-      formDataToSend.append("username", formData.username);
-      formDataToSend.append(
-        "phoneNumber",
-        JSON.stringify([formData.phoneNumber])
-      );
-      if (formData.profileImage) {
-        formDataToSend.append("profileImage", formData.profileImage);
-      }
+  // static async updateProfile(
+  //   formData: UpdateProfile,
+  //   onSuccess?: () => void
+  // ): Promise<any> {
+  //   try {
+  //     const user = await StorageService.getData("user");
+  //     const formDataToSend = new FormData();
+  //     formDataToSend.append("firstName", formData.firstName);
+  //     formDataToSend.append("lastName", formData.lastName);
+  //     formDataToSend.append("email", formData.email);
+  //     formDataToSend.append("username", formData.username);
+  //     formDataToSend.append(
+  //       "phoneNumber",
+  //       JSON.stringify([formData.phoneNumber])
+  //     );
+  //     if (formData.profileImage) {
+  //       formDataToSend.append("profileImage", formData.profileImage);
+  //     }
 
-      const response = await ApiService.authorized.patch(
-        //@ts-ignore
-        `/users/update-user/${user?.id}`,
-        formDataToSend
-      );
+  //     const response = await ApiService.authorized.patch(
+  //       //@ts-ignore
+  //       `/users/update-user/${user?.id}`,
+  //       formDataToSend
+  //     );
 
-      if (onSuccess) onSuccess();
+  //     if (onSuccess) onSuccess();
 
-      Toast.show({
-        type: "success",
-        position: "top",
-        text1: "Profile Updated",
-        text2: "Your profile has been updated successfully.",
-      });
+  //     Toast.show({
+  //       type: "success",
+  //       position: "top",
+  //       text1: "Profile Updated",
+  //       text2: "Your profile has been updated successfully.",
+  //     });
 
-      return response.data;
-    } catch (error) {
-      console.log(error);
-      Toast.show({
-        type: "error",
-        position: "top",
-        text1: "Profile Update Failed",
-        text2: "There was an error updating your profile.",
-      });
-      throw new Error("Profile update failed");
-    }
-  }
+  //     return response.data;
+  //   } catch (error) {
+  //     console.log(error);
+  //     Toast.show({
+  //       type: "error",
+  //       position: "top",
+  //       text1: "Profile Update Failed",
+  //       text2: "There was an error updating your profile.",
+  //     });
+  //     throw new Error("Profile update failed");
+  //   }
+  // }
 }
 
 export default AuthService;

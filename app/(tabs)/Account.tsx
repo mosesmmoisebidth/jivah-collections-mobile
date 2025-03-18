@@ -24,7 +24,7 @@ const Account = () => {
 
   const accountSections = [
     {
-      title: "User Options",
+      title: "Account",
       items: [
         {
           name: "Profile",
@@ -38,6 +38,13 @@ const Account = () => {
           icon: "cart",
           onClick: () => {
             router.push("/Cart");
+          },
+        },
+        {
+          name: "Favorites", 
+          icon: "heart",
+          onClick: () => {
+            router.push("/Favorites"); 
           },
         },
         {

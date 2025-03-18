@@ -26,8 +26,7 @@ import AuthService from "@/services/api/auth";
 const SignUp = () => {
   const [formData, setFormData] = useState<Register>({
     username: "",
-    firstName: "",
-    lastName: "",
+    name: "",
     email: "",
     phoneNumber: "",
     password: "",
@@ -40,19 +39,18 @@ const SignUp = () => {
   const validateForm = (): boolean => {
     let isValid = true;
     const newErrors: Record<string, string> = {};
-    const nameRegex = /^[a-zA-Z]{2,}$/;
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
     const phoneNumberRegex = /^[+]?[0-9]{10,15}$/;
+    const nameRegex = /^[a-zA-Z\s]+$/;
 
-    if (!nameRegex.test(formData.firstName.trim())) {
-      newErrors.firstName = "First name must contain at least two letters.";
+    if (!nameRegex.test(formData.name) || formData.name.length < 5) {
+      newErrors.name =
+        "Full name must be at least 5 characters long and contain only letters and spaces.";
       isValid = false;
     }
-    if (!nameRegex.test(formData.lastName.trim())) {
-      newErrors.lastName = "Last name must contain at least two letters.";
-      isValid = false;
-    }
+
     if (formData.username.trim().length < 4) {
       newErrors.username = "Username must be at least 4 characters long.";
       isValid = false;
@@ -105,10 +103,12 @@ const SignUp = () => {
     <ScrollView>
       <SafeAreaView>
         <View style={tw`flex-col gap-6 justify-center px-4 py-12 h-full`}>
-          <View style={tw`gap-3`}>
-            <OutfitBold style={tw`text-3xl text-center `}>
-              Register
-            </OutfitBold>
+          <View style={tw`gap-3 flex flex-col items-center`}>
+            <Image
+              source={require("../../assets/images/logo.png")}
+              style={{ width: 100, height: 100 }}
+            />
+            <OutfitBold style={tw`text-3xl text-center `}>Register</OutfitBold>
             <OutfitSemibold style={tw`text-gray-500 text-center px-4`}>
               Join us today and start your journey!
             </OutfitSemibold>
@@ -118,22 +118,12 @@ const SignUp = () => {
             <TextInput
               label={true}
               type="text"
-              label_name="First Name"
-              placeholder="Enter your first name"
-              value={formData.firstName}
-              onChangeText={(text) => handleInputChange("firstName", text)}
+              label_name="Full Names"
+              placeholder="Enter your full name"
+              value={formData.name}
+              onChangeText={(text) => handleInputChange("name", text)}
               prefixIcon={<Ionicons name="person" size={20} color="gray" />}
-              errorMessage={errors.firstName}
-            />
-            <TextInput
-              label={true}
-              type="text"
-              label_name="Last Name"
-              placeholder="Enter your last name"
-              value={formData.lastName}
-              onChangeText={(text) => handleInputChange("lastName", text)}
-              prefixIcon={<Ionicons name="person" size={20} color="gray" />}
-              errorMessage={errors.lastName}
+              errorMessage={errors.name}
             />
             <TextInput
               label={true}
@@ -142,7 +132,9 @@ const SignUp = () => {
               placeholder="Enter your username"
               value={formData.username}
               onChangeText={(text) => handleInputChange("username", text)}
-              prefixIcon={<Ionicons name="person-circle" size={20} color="gray" />}
+              prefixIcon={
+                <Ionicons name="person-circle" size={20} color="gray" />
+              }
               errorMessage={errors.username}
             />
             <TextInput
@@ -171,7 +163,9 @@ const SignUp = () => {
               placeholder="Enter your password"
               value={formData.password}
               onChangeText={(text) => handleInputChange("password", text)}
-              prefixIcon={<Ionicons name="lock-closed" size={20} color="gray" />}
+              prefixIcon={
+                <Ionicons name="lock-closed" size={20} color="gray" />
+              }
               type="password"
               errorMessage={errors.password}
             />
@@ -181,7 +175,9 @@ const SignUp = () => {
               placeholder="Confirm your password"
               value={confirmPassword}
               onChangeText={setConfirmPassword}
-              prefixIcon={<Ionicons name="lock-closed" size={20} color="gray" />}
+              prefixIcon={
+                <Ionicons name="lock-closed" size={20} color="gray" />
+              }
               type="password"
               errorMessage={errors.confirmPassword}
             />
@@ -191,13 +187,20 @@ const SignUp = () => {
             <TouchableOpacity
               onPress={handleRegister}
               disabled={isLoading}
-              style={tw`p-4 font-semibold text-xl ${isLoading ? "bg-gray-400" : "bg-[#c48647]"
-                } flex justify-center items-center rounded-full shadow-lg`}
+              style={tw`p-4 font-semibold text-xl ${
+                isLoading ? "bg-gray-400" : "bg-[#c48647]"
+              } flex justify-center items-center rounded-full shadow-lg`}
             >
               <View style={tw`flex-row items-center`}>
-                {isLoading && <ActivityIndicator size="small" color="white" style={tw`mr-2`} />}
+                {isLoading && (
+                  <ActivityIndicator
+                    size="small"
+                    color="white"
+                    style={tw`mr-2`}
+                  />
+                )}
                 <OutfitText style={tw`text-white text-lg`}>
-                  {isLoading ? "..." : "Sign Up"}
+                  {isLoading ? "Registering..." : "Register"}
                 </OutfitText>
               </View>
             </TouchableOpacity>
@@ -209,14 +212,23 @@ const SignUp = () => {
               <Separator />
             </View>
 
-            <TouchableOpacity style={tw`py-4 px-6 rounded-full border border-gray-300 flex flex-row items-center justify-center gap-3`}>
-              <Image source={AppImages.googleIcon} resizeMode="contain" style={tw`w-5 h-5`} />
+            <TouchableOpacity
+              style={tw`py-4 px-6 rounded-full border border-gray-300 flex flex-row items-center justify-center gap-3`}
+            >
+              <Image
+                source={AppImages.googleIcon}
+                resizeMode="contain"
+                style={tw`w-5 h-5`}
+              />
               <OutfitText>Continue with Google</OutfitText>
             </TouchableOpacity>
 
             <OutfitText style={tw`text-center mt-6`}>
               Already have an account?{" "}
-              <OutfitSemibold style={tw`text-[#c48647]`} onPress={() => router.push("/(auth)/sign-in")}>
+              <OutfitSemibold
+                style={tw`text-[#c48647]`}
+                onPress={() => router.push("/(auth)/sign-in")}
+              >
                 Log In
               </OutfitSemibold>
             </OutfitText>

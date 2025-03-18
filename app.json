@@ -12,7 +12,7 @@
     "ios": {
       "supportsTablet": true,
       "useNextNotificationsApi": true,
-      "bundleIdentifier": "com.mugisha189.jivah"
+      "bundleIdentifier": "com.yvesmugisha.jivah"
     },
     "android": {
       "googleServicesFile": "./google-services.json",
@@ -20,7 +20,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.jpg",
         "backgroundColor": "#111312"
       },
-      "package": "com.mugisha189.jivah"
+      "package": "com.yvesmugisha.jivah"
     },
     "web": {
       "bundler": "metro",
@@ -41,7 +41,7 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#111312"
         }
       ]
     ],
@@ -53,7 +53,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "c1a0d359-cfd7-429f-b472-97f7bb871bcc"
+        "projectId": "99da65f9-63c6-4c59-a0cd-76e67ac85f81"
       }
     }
   }

@@ -60,6 +60,7 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
           <Stack.Screen name="(auth)/index" options={{ headerShown: false }} />
+          <Stack.Screen name="/product/[id]" options={{ headerShown: false }} />
           <Stack.Screen
             name="categories/[category]"
             options={{ headerShown: false }}
@@ -86,6 +87,7 @@ export default function RootLayout() {
             options={{ headerShown: false }}
           />
           <Stack.Screen name="Profile" options={{ headerShown: false }} />
+          <Stack.Screen name="Favorites" options={{ headerShown: false }} />
           <Stack.Screen name="Cart" options={{ headerShown: false }} />
         </Stack>
         <StatusBar style="auto" />

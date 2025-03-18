@@ -83,7 +83,7 @@ const ChangePassword = () => {
   const handleSubmit = async () => {
     if (!validateForm()) return;
     setIsLoading(true);
-    await AuthService.changePassword({ currentPassword: formData.currentPassword, newPassword: formData.newPassword }, () => {
+    await AuthService.changePassword({ oldPassword: formData.currentPassword, newPassword: formData.newPassword }, () => {
       router.back();
     });
     setIsLoading(false);

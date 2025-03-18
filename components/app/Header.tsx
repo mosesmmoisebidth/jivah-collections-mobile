@@ -6,7 +6,9 @@ import tw from "twrnc";
 import { OutfitSemibold, OutfitText } from "../StyledText";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { router } from "expo-router";
-import StorageService from "@/services/storage";
+import { NotificationItem as INotification } from "@/utils/types";
+import useGet from "@/hooks/useGet";
+import { CartItemType } from "@/utils/types/product";
 
 interface HeaderProps {
   title?: string;
@@ -23,29 +25,24 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
   const navigation = useNavigation();
   const route = useRoute();
-  const [cartData, setCartData] = useState<any>();
-  const [notificationsData, setNotificationsData] = useState<any>();
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
+  const {
+    data: cartData,
+    loading,
+    error,
+  } = useGet<{ items: CartItemType[]; subTotal: number; discount: number }>(
+    "/cart",
+    { authorized: true, refetchTime: 5000 }
+  );
 
-    const fetchData = async () => {
-      try {
-        const cart = await StorageService.getData("cart");
-        const notification = await StorageService.getData("notifications");
-        setCartData(cart);
-        setNotificationsData(notification);
-      } catch (error) {
-        console.error("Error fetching  data:", error);
-      }
-    };
-
-    fetchData();
-    interval = setInterval(fetchData, 5000);
-
-    return () => clearInterval(interval);
-  }, []);
-
+  const {
+    data: notificationsData,
+    loading: notLoading,
+    refetch,
+  } = useGet<INotification[]>("/notifications", {
+    authorized: true,
+    refetchTime: 5000,
+  });
 
   const isActive = (target: string) => route.name === target;
 
@@ -90,7 +87,7 @@ const Header: React.FC<HeaderProps> = ({
                 color={isActive("Cart") ? "#c48647" : "black"}
               />
             </TouchableOpacity>
-            {notificationsData?.length > 0 && (
+            {notificationsData?.length && notificationsData?.length > 0 && (
               <OutfitText
                 style={tw`p-[2px] px-[7px] text-xs text-center rounded-full text-white absolute -top-3 -right-5 ${
                   isActive("Cart") ? "bg-[#c48647]" : "bg-black"
@@ -108,13 +105,13 @@ const Header: React.FC<HeaderProps> = ({
                 color={isActive("Cart") ? "#c48647" : "black"}
               />
             </TouchableOpacity>
-            {cartData?.product_count > 0 && (
+            {cartData?.items.length && cartData?.items.length > 0 && (
               <OutfitText
                 style={tw`p-[2px] px-[7px] text-xs text-center rounded-full text-white absolute -top-3 -right-5 ${
                   isActive("Cart") ? "bg-[#c48647]" : "bg-black"
                 }`}
               >
-                {cartData?.product_count}
+                {cartData?.items.length}
               </OutfitText>
             )}
           </View>

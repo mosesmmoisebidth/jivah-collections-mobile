@@ -4,7 +4,7 @@ import { Platform, View } from "react-native";
 import { HapticTab } from "@/components/HapticTab";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import TabBarBackground from "@/components/ui/TabBarBackground";
-import { Entypo, MaterialIcons } from "@expo/vector-icons";
+import { Entypo, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import StorageService from "@/services/storage";
 import { WaveIndicator } from "react-native-indicators";
 
@@ -77,11 +77,11 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="Categories"
+        name="Orders"
         options={{
-          title: "Categories",
+          title: "Orders",
           tabBarIcon: ({ color }) => (
-            <MaterialIcons name="category" size={28} color={color} />
+            <Ionicons name="clipboard" size={28} color={color} />
           ),
         }}
       />

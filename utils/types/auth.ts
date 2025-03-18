@@ -1,7 +1,6 @@
 export interface Register {
   username: string;
-  firstName: string;
-  lastName: string;
+  name: string;
   email: string;
   phoneNumber: string;
   password: string;
@@ -22,15 +21,12 @@ export interface ForgotPassword {
 }
 
 export interface ChangePassword {
-  currentPassword: string;
+  oldPassword: string;
   newPassword: string;
 }
 
 export interface UpdateProfile {
-  firstName: string;
-  lastName: string;
-  email: string;
+  name: string;
   username: string;
-  phoneNumber: string;
-  profileImage: any;
+  phone: string;
 }
