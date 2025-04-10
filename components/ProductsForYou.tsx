@@ -64,7 +64,7 @@ const ProductsForYou: React.FC<ProductsForYouProps> = ({ onClickProduct }) => {
 
   const ProductCard: React.FC<{ item: Product }> = ({ item }) => (
     <TouchableOpacity
-      style={tw`bg-white rounded-xl border border-gray-300 mb-6 w-64 mx-1`}
+      style={tw`bg-neutral-50 rounded-xl border border-gray-300 mb-6 w-64 mx-1`}
       onPress={() => onClickProduct(item.id)}
     >
       <Image
@@ -150,7 +150,7 @@ const ProductsForYou: React.FC<ProductsForYouProps> = ({ onClickProduct }) => {
                 <View
                   style={[
                     tw`w-16 h-16 mb-2 flex items-center justify-center rounded-full border-gray-300`,
-                    tw`bg-white border`,
+                    tw`bg-neutral-50 border`,
                   ]}
                 >
                   <Image

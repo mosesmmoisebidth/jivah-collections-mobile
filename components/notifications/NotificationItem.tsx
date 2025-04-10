@@ -35,7 +35,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
     <TouchableOpacity
       onPress={onPress}
       style={tw`flex-row items-center p-4 rounded-xl ${
-        read ? "bg-gray-100" : "bg-white"
+        read ? "bg-gray-100" : "bg-neutral-50"
       } shadow-md`}
     >
       <View style={tw`mr-4`}>{getIcon()}</View>

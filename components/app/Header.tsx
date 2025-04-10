@@ -9,6 +9,7 @@ import { router } from "expo-router";
 import { NotificationItem as INotification } from "@/utils/types";
 import useGet from "@/hooks/useGet";
 import { CartItemType } from "@/utils/types/product";
+import { StatusBar } from "expo-status-bar";
 
 interface HeaderProps {
   title?: string;

@@ -18,13 +18,13 @@ interface FiltersProps {
     category: string | null;
     sizes: string[];
     colors: string[];
-    priceRange: [number, number];
+    priceRange: [string, string];
   };
   onChange: (newFilters: {
     category: string | null;
     sizes: string[];
     colors: string[];
-    priceRange: [number, number];
+    priceRange: [string, string];
   }) => void;
 }
 
@@ -53,7 +53,7 @@ const ProductFilters: React.FC<FiltersProps> = ({
   const [selectedColor, setSelectedColor] = useState<string[]>(
     selectedFilters.colors || []
   );
-  const [rangePrices, setRangePrices] = useState<[number, number]>(
+  const [rangePrices, setRangePrices] = useState<[string, string]>(
     selectedFilters.priceRange
   );
 
@@ -93,12 +93,12 @@ const ProductFilters: React.FC<FiltersProps> = ({
   const handleReset = () => {
     setSelectedColor([]);
     setSelectedSize([]);
-    setRangePrices([0, 10000000]);
+    setRangePrices(["0", "10000000"]);
     onChange({
       category: null,
       sizes: [],
       colors: [],
-      priceRange: [0, 0],
+      priceRange: ["0", "0"],
     });
     handleClose();
   };
@@ -137,7 +137,7 @@ const ProductFilters: React.FC<FiltersProps> = ({
           style={tw`flex-1 justify-center items-center bg-black/50 relative`}
         >
           <View
-            style={tw`bg-white p-4 rounded-t-2xl w-full max-h-4/5 absolute bottom-0`}
+            style={tw`bg-neutral-50 p-4 rounded-t-2xl w-full max-h-4/5 absolute bottom-0`}
           >
             {loading ? (
               <OutfitText>Loading...</OutfitText>
@@ -150,10 +150,19 @@ const ProductFilters: React.FC<FiltersProps> = ({
               </View>
             ) : (
               <ScrollView>
-                <View style={tw`mt-5`}>
-                  <OutfitSemibold style={tw`text-lg font-semibold`}>
-                    Categories
-                  </OutfitSemibold>
+                <View style={tw`mt-3`}>
+                  <View style={tw`flex-row justify-between items-center p-2`}>
+                    <OutfitSemibold style={tw`text-lg font-semibold`}>
+                      Categories
+                    </OutfitSemibold>
+                    <TouchableOpacity
+                      onPress={handleClose}
+                      style={tw`rounded-2xl border-[#c48647] border  py-1 px-10 `}
+                    >
+                      <OutfitText style={tw`text-lg `}>Close</OutfitText>
+                    </TouchableOpacity>
+                  </View>
+
                   <View style={tw`flex-wrap flex-row gap-4`}>
                     {filters?.categories.map((category) => (
                       <TouchableOpacity
@@ -202,13 +211,12 @@ const ProductFilters: React.FC<FiltersProps> = ({
                         key={color}
                         onPress={() => handleChange(color, "color")}
                         style={[
-                          tw`p-2 bg-gray-100 rounded-md`,
+                          tw`w-10 h-10 rounded-full m-1`,
+                          { backgroundColor: color },
                           selectedColor.includes(color) &&
-                            tw`bg-blue-500 text-white`,
+                            tw`border-2 border-blue-500`,
                         ]}
-                      >
-                        <OutfitText>{color}</OutfitText>
-                      </TouchableOpacity>
+                      />
                     ))}
                   </View>
                 </View>
@@ -223,9 +231,9 @@ const ProductFilters: React.FC<FiltersProps> = ({
                       <TextInput
                         style={tw`border border-gray-200 rounded-2xl p-2`}
                         keyboardType="numeric"
-                        value={String(rangePrices[0])}
+                        value={rangePrices[0] as any}
                         onChangeText={(text) =>
-                          setRangePrices([parseFloat(text), rangePrices[1]])
+                          setRangePrices([text, rangePrices[1]])
                         }
                       />
                     </View>
@@ -234,9 +242,9 @@ const ProductFilters: React.FC<FiltersProps> = ({
                       <TextInput
                         style={tw`border border-gray-200 rounded-2xl p-2`}
                         keyboardType="numeric"
-                        value={String(rangePrices[1])}
+                        value={rangePrices[1] as any}
                         onChangeText={(text) =>
-                          setRangePrices([rangePrices[0], parseFloat(text)])
+                          setRangePrices([rangePrices[0], text])
                         }
                       />
                     </View>
@@ -248,13 +256,17 @@ const ProductFilters: React.FC<FiltersProps> = ({
                     onPress={handleReset}
                     style={tw`rounded-2xl border-[#c48647] border  py-3 flex-1 `}
                   >
-                    <OutfitText style={tw`text-center `}>Reset Filters</OutfitText>
+                    <OutfitText style={tw`text-center `}>
+                      Reset Filters
+                    </OutfitText>
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={handleApply}
                     style={tw`rounded-2xl bg-[#c48647]  py-3 flex-1 `}
                   >
-                    <OutfitText style={tw`text-white text-center`}>Apply Filters</OutfitText>
+                    <OutfitText style={tw`text-white text-center`}>
+                      Apply Filters
+                    </OutfitText>
                   </TouchableOpacity>
                 </View>
               </ScrollView>

@@ -74,13 +74,16 @@ class AuthService {
         text2: "Your account has been created!",
       });
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       // Show error toast message
       Toast.show({
         type: "error",
         position: "top",
         text1: "Registration Failed",
-        text2: "There was an error during registration.",
+        text2:
+          error.response.data.message ||
+          error.message ||
+          "There was an error during registration.",
       });
     }
   }

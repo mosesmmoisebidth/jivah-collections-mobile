@@ -89,12 +89,12 @@ const About = () => {
     require("../assets/images/nikelogo.jpg"),
   ];
   return (
-    <SafeAreaView style={tw`bg-white pt-6`}>
+    <SafeAreaView style={tw`bg-neutral-50 pt-6`}>
       {/* Header */}
       <Header title="About Us" back />
 
       {/* Main Content */}
-      <ScrollView style={tw`bg-white pt-3`}>
+      <ScrollView style={tw`bg-neutral-50 pt-3`}>
         <View style={tw`mb-[4rem] gap-5`}>
           <OutfitText style={tw`text-[#c48647] text-base px-6`}>
             Delivering Fashion Solutions to Elevate Your Style and Convenience.

@@ -40,6 +40,7 @@ const SectionMoreProducts = ({
         keyExtractor={(item, index) => item?.id?.toString() || index.toString()}
         numColumns={2}
         columnWrapperStyle={tw`justify-between`}
+        scrollEnabled={false} 
         renderItem={({ item }) =>
           loading ? (
             <View style={tw`w-[48%] mb-4`}>

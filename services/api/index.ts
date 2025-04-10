@@ -6,7 +6,7 @@ import axios, {
 } from "axios";
 import StorageService from "../storage";
 
-const BASE_URL = "https://jivah-backend-1.onrender.com";
+const BASE_URL = "https://jivah-backend-web-production.up.railway.app";
 
 class ApiService {
   private static unauthorizedApi = axios.create({

@@ -95,7 +95,7 @@ const ChangePassword = () => {
   };
 
   return (
-    <SafeAreaView style={tw`flex-1 bg-white pt-6`}>
+    <SafeAreaView style={tw`flex-1 bg-neutral-50 pt-6`}>
       <Header title="Change Password" back />
       <ScrollView contentContainerStyle={tw`px-4 pb-4`}>
         <View style={tw`py-6 gap-y-3`}>
@@ -133,7 +133,7 @@ const ChangePassword = () => {
           <TouchableOpacity
             onPress={handleSubmit}
             disabled={isLoading}
-            style={tw`p-4 font-semibold text-2xl mt-5 ${isLoading ? "bg-gray-400" : "bg-[#c48647]"
+            style={tw`p-4 font-semibold text-2xl mt-5 ${isLoading ? "bg-[#c48647]/50" : "bg-[#c48647]"
               } flex justify-center items-center rounded-full`}
           >
             <View style={tw`flex-row items-center`}>

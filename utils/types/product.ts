@@ -1,12 +1,21 @@
+export interface DiscountType {
+  id?: string;
+  percentage: number;
+  startDate: string;
+  endDate: string;
+}
+
 export type ProductType = {
   id?: string;
   price: number;
   quantity: number;
+  isFavorited: boolean;
   image: string;
   updatedAt: string;
   discounts: any[];
   name: string;
   description: string;
+  soldQuantity: number;
   category:
     | string
     | {
@@ -30,6 +39,7 @@ export type ProductType = {
       quantity: number;
       price: number;
       updatedAt: string;
+      discounts: DiscountType[];
     }[];
   }[];
   reviews: ReviewType[];
@@ -37,6 +47,7 @@ export type ProductType = {
 
 export type CartItemType = {
   id?: string;
+  inventoryId: string;
   price: number;
   product: {
     id: string;
@@ -52,6 +63,24 @@ export type ReviewType = {
   id: string;
   comment: string;
   rating: number;
+  image?: string;
+  product: {
+    name: string;
+  };
+  user: {
+    name: string;
+    email: string;
+  };
+  replies: {
+    id: string;
+    comment: string;
+    user: {
+      name: string;
+      email: string;
+    };
+    createdAt: string;
+  }[];
+  createdAt: string;
 };
 
 export type ProductFilters = {

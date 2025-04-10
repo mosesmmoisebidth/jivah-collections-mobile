@@ -31,7 +31,7 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({
       {/* Checkbox */}
       <View
         style={tw`w-6 h-6 rounded-md border ${
-          checked ? 'bg-blue-500 border-blue-500' : 'bg-white border-gray-300'
+          checked ? 'bg-blue-500 border-blue-500' : 'bg-neutral-50 border-gray-300'
         } flex items-center justify-center`}
       >
         {checked && <Text style={tw`text-white text-lg`}>✓</Text>}

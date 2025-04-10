@@ -1,7 +1,21 @@
-import React from "react";
-import { View, FlatList, ActivityIndicator } from "react-native";
+import React, { useMemo, useState } from "react";
+import {
+  View,
+  FlatList,
+  ActivityIndicator,
+  TouchableOpacity,
+  StatusBar,
+  SafeAreaView,
+} from "react-native";
 import tw from "twrnc";
-import { format, isToday, isYesterday, parseISO } from "date-fns";
+import {
+  format,
+  isThisMonth,
+  isThisYear,
+  isToday,
+  isYesterday,
+  parseISO,
+} from "date-fns";
 import { useNavigation } from "expo-router";
 import Header from "@/components/app/Header";
 import { Ionicons } from "@expo/vector-icons";
@@ -11,43 +25,64 @@ import { OutfitText } from "@/components/StyledText";
 import NotificationItem, {
   NotificationItemSkeleton,
 } from "@/components/notifications/NotificationItem";
+import useGetInfiniteScroll from "@/hooks/useGetInfiniteScroll";
 
 const Notifications: React.FC = () => {
   const navigation = useNavigation();
-  const {
-    data: notifications,
-    loading,
-    refetch,
-  } = useGet<INotification[]>("/notifications", {
-    authorized: true,
-  });
 
   React.useLayoutEffect(() => {
     navigation.setOptions({ headerShown: false });
   }, [navigation]);
 
-  const groupNotifications = React.useCallback(() => {
+  const {
+    data: notifications,
+    loading,
+    error,
+    hasMore,
+    loadMore,
+  } = useGetInfiniteScroll<INotification>("/notifications", {
+    authorized: true,
+    pageSize: 10,
+  });
+  console.log(notifications);
+  const [isVisible, setIsVisible] = useState(false);
+
+  const handleOpenMenu = () => setIsVisible(true);
+  const handleCloseMenu = () => setIsVisible(false);
+
+  const groupNotifications = useMemo(() => {
     const grouped: Record<string, INotification[]> = {};
-    notifications?.forEach((notif) => {
-      const date = parseISO(notif.createdAt.toISOString());
-      let title = format(date, "MMMM yyyy");
-      if (isToday(date)) title = "Today";
-      else if (isYesterday(date)) title = "Yesterday";
-      else if (format(date, "yyyy-MM") === format(new Date(), "yyyy-MM")) {
-        title = format(date, "MMMM dd");
+    notifications?.forEach((notification) => {
+      const date = parseISO(
+        typeof notification.createdAt == "string"
+          ? notification.createdAt
+          : new Date(notification.createdAt).toISOString()
+      );
+      let key;
+
+      if (isToday(date)) {
+        key = "Today";
+      } else if (isYesterday(date)) {
+        key = "Yesterday";
+      } else if (isThisMonth(date)) {
+        key = format(date, "MMMM dd");
+      } else if (isThisYear(date)) {
+        key = format(date, "MMMM yyyy");
+      } else {
+        key = format(date, "yyyy");
       }
-      if (!grouped[title]) grouped[title] = [];
-      grouped[title].push(notif);
+
+      if (!grouped[key]) grouped[key] = [];
+      grouped[key].push(notification);
     });
-    return Object.entries(grouped);
+
+    return grouped;
   }, [notifications]);
 
-  const groupedData = groupNotifications();
-
   return (
-    <View style={tw`flex-1 p-4 bg-white`}>
+    <SafeAreaView style={tw`flex-1 p-4 bg-neutral-50`}>
       <Header title="Notifications" back />
-      {!loading ? (
+      {loading ? (
         <View>
           {[...Array(5)].map((_, index) => (
             <View style={tw`my-2`}>
@@ -64,7 +99,7 @@ const Notifications: React.FC = () => {
         </View>
       ) : (
         <FlatList
-          data={groupedData}
+          data={Object.entries(groupNotifications) || []}
           keyExtractor={(item) => item[0]}
           renderItem={({ item }) => (
             <View style={tw`mb-4`}>
@@ -78,14 +113,22 @@ const Notifications: React.FC = () => {
               ))}
             </View>
           )}
-          onEndReached={refetch}
-          onEndReachedThreshold={0.5}
           ListFooterComponent={
-            loading ? <ActivityIndicator size="small" /> : null
+            hasMore ? (
+              <TouchableOpacity
+                style={tw`w-full mt-4 py-2 bg-blue-500 rounded-lg`}
+                onPress={loadMore}
+                disabled={loading}
+              >
+                <OutfitText style={tw`text-white text-center`}>
+                  {loading ? "Loading..." : "Load More"}
+                </OutfitText>
+              </TouchableOpacity>
+            ) : null
           }
         />
       )}
-    </View>
+    </SafeAreaView>
   );
 };
 

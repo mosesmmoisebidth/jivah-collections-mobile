@@ -4,17 +4,20 @@ import Svg, { Path } from "react-native-svg";
 import { router } from "expo-router";
 import ApiService from "@/services/api";
 import AuthService from "@/services/api/auth";
+import Toast from "react-native-toast-message";
 
 export interface LikeButtonProps {
   style?: any;
   liked?: boolean;
   productId: string;
+  onFinishLikeDislike?: () => void;
 }
 
 const LikeButton: React.FC<LikeButtonProps> = ({
   style = {},
   liked = false,
   productId,
+  onFinishLikeDislike,
 }) => {
   const [user, setUser] = useState<any>(null);
 
@@ -43,14 +46,15 @@ const LikeButton: React.FC<LikeButtonProps> = ({
       const response = await ApiService.authorized.post("/users/favorite", {
         productId,
       });
-
-      if (response.status === 200) {
-        setIsLiked(!isLiked);
-      } else {
-        throw new Error("Failed to like the product");
-      }
+      setIsLiked(!isLiked);
+      onFinishLikeDislike && onFinishLikeDislike();
     } catch (err) {
       console.error(err);
+      Toast.show({
+        type: "error",
+        position: "top",
+        text1: "Favoriting product failed.",
+      });
     }
   };
 

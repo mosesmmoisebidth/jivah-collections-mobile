@@ -44,8 +44,8 @@ const SectionBestDeals = () => {
           showsHorizontalScrollIndicator={false}
           style={tw`flex-row`}
         >
-          {products?.map((item) => (
-            <View key={item.id} style={[tw`pr-2`, { width: screenWidth }]}>
+          {products?.map((item,index) => (
+            <View key={index} style={[tw`pr-2`, { width: screenWidth }]}>
               <ProductCard product={item} />
             </View>
           ))}

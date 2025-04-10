@@ -1,9 +1,11 @@
 import { FC, useState } from "react";
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, Image } from "react-native";
 import tw from "twrnc";
 
 import { ProductType } from "@/utils/types/product";
-import { OutfitBold, OutfitText } from "../StyledText";
+import { OutfitBold, OutfitSemibold, OutfitText } from "../StyledText";
+import { Ionicons } from "@expo/vector-icons";
+import { format } from "date-fns";
 
 interface ProductInfoTabProps {
   product: ProductType;
@@ -44,16 +46,90 @@ const ProductInfoTab: FC<ProductInfoTabProps> = ({ product }) => {
           {product.description}
         </OutfitText>
       ) : (
-        <View style={tw`gap-4`}>
+        <View style={tw`space-y-4`}>
           {product.reviews.map((review) => (
-            <View
-              key={review.id}
-              style={tw`p-3 border rounded-lg border-gray-200`}
-            >
-              <OutfitText style={tw`text-gray-600 text-xs`}>
-                Rating: {review.rating}
-              </OutfitText>
-              <OutfitText style={tw`text-black`}>{review.comment}</OutfitText>
+            <View key={review.id} style={tw`border p-4 rounded-lg shadow-sm`}>
+              <View style={tw`flex-row items-start gap-3`}>
+                <View
+                  style={tw`w-10 h-10 bg-gray-300 items-center justify-center rounded-full`}
+                >
+                  <OutfitBold style={tw`text-white font-semibold`}>
+                    {review.user?.name.charAt(0).toUpperCase()}
+                  </OutfitBold>
+                </View>
+                <View style={tw`flex-1`}>
+                  <View style={tw`flex-row justify-between items-center`}>
+                    <OutfitSemibold style={tw`font-semibold`}>
+                      {review.user?.name}
+                    </OutfitSemibold>
+                    <OutfitText style={tw`text-sm text-gray-500`}>
+                      {format(new Date(review.createdAt), "PP")}
+                    </OutfitText>
+                  </View>
+
+                  <View style={tw`flex-row mt-1`}>
+                    {[...Array(5)].map((_, index) => (
+                      <Ionicons
+                        key={index}
+                        name={index < review.rating ? "star" : "star-outline"}
+                        size={16}
+                        color={index < review.rating ? "#c48647" : "gray"}
+                      />
+                    ))}
+                  </View>
+
+                  {review.comment && (
+                    <OutfitText style={tw`mt-2`}>{review.comment}</OutfitText>
+                  )}
+
+                  {review.image && (
+                    <Image
+                      source={{ uri: review.image }}
+                      style={tw`mt-3 rounded-md w-full h-60`}
+                      resizeMode="cover"
+                    />
+                  )}
+
+                  {review.replies?.length > 0 && (
+                    <View style={tw`mt-4 space-y-3`}>
+                      <OutfitText
+                        style={tw`text-sm font-semibold text-gray-600`}
+                      >
+                        Replies
+                      </OutfitText>
+                      {review.replies.map((reply) => (
+                        <View
+                          key={reply.id}
+                          style={tw`flex-row items-start gap-3 border-l-4 border-gray-200 pl-3`}
+                        >
+                          <View
+                            style={tw`w-8 h-8 bg-gray-400 items-center justify-center rounded-full`}
+                          >
+                            <OutfitBold style={tw`text-white font-semibold`}>
+                              JC
+                            </OutfitBold>
+                          </View>
+                          <View style={tw`flex-1`}>
+                            <View
+                              style={tw`flex-row justify-between items-center`}
+                            >
+                              <OutfitSemibold style={tw`text-sm font-semibold`}>
+                                Jivah Collections Team
+                              </OutfitSemibold>
+                              <OutfitText style={tw`text-xs text-gray-500`}>
+                                {format(new Date(reply.createdAt), "PP")}
+                              </OutfitText>
+                            </View>
+                            <OutfitText style={tw`text-sm mt-1`}>
+                              {reply.comment}
+                            </OutfitText>
+                          </View>
+                        </View>
+                      ))}
+                    </View>
+                  )}
+                </View>
+              </View>
             </View>
           ))}
         </View>
@@ -64,7 +140,7 @@ const ProductInfoTab: FC<ProductInfoTabProps> = ({ product }) => {
 
 export const ProductInfoTabSkeleton = () => {
   return (
-    <View >
+    <View>
       <OutfitText style={tw`text-lg font-bold mb-2`}>Product Info</OutfitText>
 
       <View style={tw`flex-row mb-5`}>

@@ -58,7 +58,7 @@ const CategoryProducts = () => {
                     params: { id: item.id },
                 })
             }
-            style={tw`bg-white rounded-xl border border-gray-200 mb-3 w-[49%] relative`}
+            style={tw`bg-neutral-50 rounded-xl border border-gray-200 mb-3 w-[49%] relative`}
         >
             <TouchableOpacity
                 style={tw`absolute right-[2%] top-[2%] w-fit bg-gray-100 p-2 rounded-full`}
@@ -106,9 +106,9 @@ const CategoryProducts = () => {
     );
 
     return (
-        <SafeAreaView style={tw`bg-white flex-1`}>
+        <SafeAreaView style={tw`bg-neutral-50 flex-1`}>
             <Header title={`${category} Products`} back cart />
-            <View style={tw`bg-white px-2 pt-3 flex-1 gap-4`}>
+            <View style={tw`bg-neutral-50 px-2 pt-3 flex-1 gap-4`}>
                 <View style={tw`flex-row gap-2 items-center bg-gray-100 border border-gray-300 px-3 py-1 rounded-full`}>
                     <Feather name="search" size={21} color="black" />
                     <TextInput

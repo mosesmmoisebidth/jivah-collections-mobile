@@ -151,7 +151,7 @@ const Profile = () => {
   }
 
   return (
-    <SafeAreaView style={tw`flex-1 bg-white pt-6`}>
+    <SafeAreaView style={tw`flex-1 bg-neutral-50 pt-6`}>
       <Header title="Profile" back />
       <ScrollView contentContainerStyle={tw`px-4 pb-4`}>
         <View style={tw`mb-6`}>
@@ -216,7 +216,7 @@ const Profile = () => {
             }}
             disabled={isLoading}
             style={tw`p-4 font-semibold text-2xl mt-5 ${
-              isLoading ? "bg-gray-400" : "bg-[#c48647]"
+              isLoading ? "bg-[#c48647]/50" : "bg-[#c48647]"
             } flex justify-center items-center rounded-full`}
           >
             <View style={tw`flex-row items-center`}>
@@ -260,7 +260,7 @@ const Profile = () => {
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={tw`flex-1 justify-end bg-black/50`}>
-          <View style={tw`bg-white p-3 rounded-t-3xl`}>
+          <View style={tw`bg-neutral-50 p-3 pb-5 rounded-t-3xl`}>
             <OutfitText style={tw`text-lg font-semibold text-center`}>
               Are you sure you want to delete your account?
             </OutfitText>

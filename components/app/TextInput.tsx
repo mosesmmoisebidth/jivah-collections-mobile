@@ -5,6 +5,7 @@ import {
   Text,
   TouchableOpacity,
   FlatList,
+  KeyboardTypeOptions,
 } from "react-native";
 import { OutfitText } from "../StyledText";
 import tw from "twrnc";
@@ -20,7 +21,8 @@ interface AppTextInputProps {
   prefixIcon?: JSX.Element;
   suffixIcon?: JSX.Element;
   errorMessage?: string;
-  editable?: boolean; // Added editable prop
+  editable?: boolean;
+  keyboardType?: KeyboardTypeOptions; // New prop to specify keyboard type
 }
 
 const AppTextInput: React.FC<AppTextInputProps> = ({
@@ -28,13 +30,13 @@ const AppTextInput: React.FC<AppTextInputProps> = ({
   placeholder,
   value,
   onChangeText,
-
   label,
   prefixIcon,
   suffixIcon,
   errorMessage,
   editable = true,
   type = "text",
+  keyboardType = "default", // Default keyboard type
 }) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
@@ -57,19 +59,28 @@ const AppTextInput: React.FC<AppTextInputProps> = ({
 
       {["text", "textarea", "password"].includes(type) && (
         <View
-          style={tw`flex-row items-center w-full px-4 py-2 gap-2 rounded-full bg-gray-100 border border-gray-300`}
+          style={[
+            {
+              paddingHorizontal: 16,
+              paddingVertical: 8,
+              gap: 8,
+            },
+            tw`flex-row items-center w-full px-4 py-2 gap-2 rounded-2xl bg-gray-100 border border-gray-300`,
+          ]}
         >
           {prefixIcon && <View>{prefixIcon}</View>}
 
           <TextInput
-            style={tw`flex-1 text-gray-500`}
+            style={tw`flex-1 text-gray-500 py-2 p`}
             placeholder={placeholder}
+            placeholderTextColor="gray"
             value={value}
             onChangeText={onChangeText}
             secureTextEntry={type === "password" && !isPasswordVisible}
             multiline={type === "textarea"}
             textAlignVertical={type === "textarea" ? "top" : "center"}
-            editable={editable} // Control editability
+            editable={editable}
+            keyboardType={keyboardType} // Allow specifying keyboard type
           />
 
           {type === "password" ? (
@@ -108,7 +119,7 @@ const AppTextInput: React.FC<AppTextInputProps> = ({
                 <Text>{item}</Text>
               </TouchableOpacity>
             )}
-            style={tw`bg-white border rounded-lg max-h-[200px]`}
+            style={tw`bg-neutral-50 border rounded-lg max-h-[200px]`}
           />
         </>
       )}

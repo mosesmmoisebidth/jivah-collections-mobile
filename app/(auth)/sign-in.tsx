@@ -118,7 +118,9 @@ const SignIn = () => {
   return (
     <ScrollView>
       <SafeAreaView>
-        <View style={tw`flex-col gap-5 justify-center items-center px-4 py-20 h-full`}>
+        <View
+          style={tw`flex-col gap-5 justify-center items-center px-4 py-20 h-full`}
+        >
           <Image
             source={require("../../assets/images/logo.png")}
             style={{ width: 100, height: 100 }}
@@ -136,6 +138,7 @@ const SignIn = () => {
               onChangeText={(value) => handleInputChange("email", value)}
               type="text"
               label={true}
+              keyboardType="email-address"
               prefixIcon={<Ionicons name="mail" size={20} color="gray" />}
               errorMessage={errors.email}
             />
@@ -158,8 +161,8 @@ const SignIn = () => {
               onPress={handleLogin}
               disabled={isLoading}
               style={tw`p-4 font-semibold text-2xl ${
-                isLoading ? "bg-gray-400" : "bg-[#c48647]"
-              } flex justify-center items-center rounded-full`}
+                isLoading ? "bg-[#c48647]/50" : "bg-[#c48647]"
+              } flex justify-center items-center rounded-2xl`}
             >
               <View style={tw`flex-row items-center`}>
                 {isLoading && (
@@ -170,7 +173,7 @@ const SignIn = () => {
                   />
                 )}
                 <OutfitText style={tw`text-white`}>
-                  {isLoading ? "Signing in..." : "Login"}
+                  {isLoading ? "Logging in, please wait..." : "Login"}
                 </OutfitText>
               </View>
             </TouchableOpacity>
@@ -190,7 +193,7 @@ const SignIn = () => {
 
             <View style={tw`gap-4`}>
               <TouchableOpacity
-                style={tw`py-4 px-6 rounded-full border border-gray-300 flex flex-row items-center justify-center gap-3`}
+                style={tw`py-4 px-6 rounded-2xl border border-gray-300 flex flex-row items-center justify-center gap-3`}
               >
                 <Image
                   source={AppImages.googleIcon}

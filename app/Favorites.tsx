@@ -28,6 +28,8 @@ const Favorites: React.FC = () => {
     authorized: true,
   });
 
+  console.log(productData);
+
   if ((error || !productData) && !loading) {
     return (
       <SafeAreaView style={tw`flex-1 items-center justify-center p-6`}>
@@ -53,7 +55,7 @@ const Favorites: React.FC = () => {
   }
 
   return (
-    <SafeAreaView style={tw`bg-white flex-1`}>
+    <SafeAreaView style={tw`bg-neutral-50 flex-1`}>
       <Header title="Your favoites" back />
       <View style={tw`px-4 pt-3 flex-1`}>
         <FlatList
@@ -65,7 +67,13 @@ const Favorites: React.FC = () => {
           columnWrapperStyle={tw`justify-between`}
           renderItem={({ item }) => (
             <View style={tw`w-[48%] mb-4`}>
-              <ProductCard layout="grid" product={item} />
+              <ProductCard
+                layout="grid"
+                product={item}
+                onFinishLikeDislike={() => {
+                  refetch();
+                }}
+              />
             </View>
           )}
           ListEmptyComponent={

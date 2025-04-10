@@ -80,7 +80,7 @@ const ProductList = ({
             ${item.sale_price}
           </OutfitSemibold>
           <TouchableOpacity
-            style={tw`border border-gray-300 bg-white rounded-full py-2 px-3`}
+            style={tw`border border-gray-300 bg-neutral-50 rounded-full py-2 px-3`}
             onPress={() => handleAddToCart(item.id as any)}
             disabled={isAddingToCart}
           >
@@ -110,7 +110,7 @@ const ProductList = ({
   );
 
   return (
-    <View style={tw`bg-white pt-3 flex-1`}>
+    <View style={tw`bg-neutral-50 pt-3 flex-1`}>
       <OutfitSemibold style={tw`text-lg text-gray-800 px-4 mb-3`}>
         {title}
       </OutfitSemibold>

@@ -129,13 +129,13 @@ const SingleProduct = () => {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 10,
-    paddingTop: 40,
+    paddingTop: 50,
     position: "relative",
   },
   backButton: {
     position: "absolute",
     left: 15,
-    top: 25,
+    top: 45,
     zIndex: 10,
   },
   section: {

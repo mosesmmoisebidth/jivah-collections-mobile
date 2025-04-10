@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { View, Image, ScrollView } from "react-native";
+import { View, Image, ScrollView, TouchableOpacity } from "react-native";
 import tw from "twrnc";
 import useGet from "../../hooks/useGet";
 import { CategoryType } from "@/utils/types/product";
 import { OutfitSemibold, OutfitText } from "../StyledText";
+import { router } from "expo-router";
 
 const SectionCategories = () => {
   const {
@@ -38,11 +39,17 @@ const SectionCategories = () => {
         ) : (
           categories?.map((item) => (
             <View key={item.id} style={tw`items-center space-y-4 p-4 w-30`}>
-              <View
+              <TouchableOpacity
+                onPress={() => {
+                  router.push({
+                    pathname: "/(tabs)/OurShop",
+                    params: { category: item.name },
+                  });
+                }}
                 style={tw`w-16 h-16 bg-gray-200 rounded-2xl overflow-hidden`}
               >
                 <Image source={{ uri: item.image }} style={tw`w-full h-full`} />
-              </View>
+              </TouchableOpacity>
               <OutfitText style={tw`text-sm font-semibold text-center`}>
                 {item.name}
               </OutfitText>

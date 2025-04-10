@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "jivah",
-    "slug": "jivah",
+    "slug": "jivah-collections",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -53,8 +53,9 @@
         "origin": false
       },
       "eas": {
-        "projectId": "99da65f9-63c6-4c59-a0cd-76e67ac85f81"
+        "projectId": "cc39b710-efc8-4fd6-a0b7-3b8e4516f01d"
       }
-    }
+    },
+    "owner": "yvesmugisha"
   }
 }

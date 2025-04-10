@@ -17,20 +17,29 @@ import ProductCard, {
 } from "@/components/product/ProductCard";
 import { ProductType } from "@/utils/types/product";
 import ProductFilters from "@/components/product/Filters";
+import { OutfitSemibold, OutfitText } from "@/components/StyledText";
+import { useLocalSearchParams } from "expo-router";
 
 const OurShop: React.FC = () => {
+  const searchParams = useLocalSearchParams<{
+    category: string;
+    search: string;
+  }>();
+  console.log("Here are search params");
+  console.log(searchParams);
+
   const [filters, setFilters] = useState<{
     category: string | null;
     sizes: string[];
     colors: string[];
-    priceRange: [number, number];
+    priceRange: [string, string];
     search: string;
   }>({
-    category: "",
+    category: searchParams.category ?? "",
     colors: [],
     sizes: [],
-    search: "",
-    priceRange: [0, 10000000],
+    search: searchParams.search ?? "",
+    priceRange: ["0", "10000000"],
   });
   const [pagination, setPagination] = useState({ page: 1, limit: 50 });
   const [sorting, setSorting] = useState<string>("latest");
@@ -63,25 +72,29 @@ const OurShop: React.FC = () => {
   if (error) {
     return (
       <SafeAreaView style={tw`flex-1 items-center justify-center p-6`}>
-        <Text style={tw`text-6xl font-bold text-red-500`}>Error</Text>
-        <Text style={tw`text-xl font-semibold mt-4`}>
+        <OutfitSemibold style={tw`text-6xl font-bold text-red-500`}>
+          Error
+        </OutfitSemibold>
+        <OutfitText style={tw`text-xl font-semibold mt-4`}>
           Oops, something went wrong
-        </Text>
-        <Text style={tw`text-gray-500 mt-2 text-center`}>
+        </OutfitText>
+        <OutfitText style={tw`text-gray-500 mt-2 text-center`}>
           {error || "An unexpected error occurred. Please try again later."}
-        </Text>
+        </OutfitText>
         <TouchableOpacity
           style={tw`mt-6 px-10 py-3 bg-[#c48647] rounded-2xl`}
           onPress={() => refetch()}
         >
-          <Text style={tw`text-white text-lg font-semibold`}>Try Again</Text>
+          <OutfitText style={tw`text-white text-lg font-semibold`}>
+            Try Again
+          </OutfitText>
         </TouchableOpacity>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={tw`bg-white flex-1`}>
+    <SafeAreaView style={tw`bg-neutral-50 flex-1`}>
       <Header title="Our Shop" cart />
       <View style={tw`px-4 pt-3 flex-1`}>
         <View
@@ -129,23 +142,48 @@ const OurShop: React.FC = () => {
               </View>
             )}
             ListEmptyComponent={
-              loading && !productData ? null : (
+              !loading && !productData ? null : (
                 <View style={tw`h-full items-center justify-center pt-[30%]`}>
-                  <Text style={tw`text-3xl font-bold text-[#c48647]`}>
-                    No Products Available
-                  </Text>
-                  <Text style={tw`text-lg text-gray-500 mt-2 text-center`}>
-                    We couldn't find any products at the moment. Please check
-                    back later.
-                  </Text>
-                  <TouchableOpacity
-                    style={tw`mt-6 px-10 py-3 bg-[#c48647] rounded-2xl`}
-                    onPress={() => refetch()}
+                  <OutfitSemibold style={tw`text-2xl font-bold text-[#c48647]`}>
+                    {Object.values(filters).some((value) => value)
+                      ? "No Items Matching Your Filters"
+                      : "No Products Available"}
+                  </OutfitSemibold>
+                  <OutfitText
+                    style={tw`text-lg text-gray-500 mt-2 text-center`}
                   >
-                    <Text style={tw`text-white text-lg font-semibold`}>
-                      Refresh
-                    </Text>
-                  </TouchableOpacity>
+                    {Object.values(filters).some((value) => value)
+                      ? "We couldn't find any products that match your filters. Please try adjusting them."
+                      : "We couldn't find any products at the moment. Please check back later."}
+                  </OutfitText>
+                  <View style={tw`flex-row justify-between mt-5 gap-5 p-2`}>
+                    {Object.values(filters).some((value) => value) && (
+                      <TouchableOpacity
+                        onPress={() =>
+                          setFilters({
+                            category: "",
+                            colors: [],
+                            sizes: [],
+                            search: "",
+                            priceRange: ["0", "10000000"],
+                          })
+                        }
+                        style={tw`rounded-2xl border-[#c48647] border px-10 py-3  `}
+                      >
+                        <OutfitText style={tw`text-center `}>
+                          Reset Filters
+                        </OutfitText>
+                      </TouchableOpacity>
+                    )}
+                    <TouchableOpacity
+                      style={tw`px-10 py-3 bg-[#c48647] rounded-2xl`}
+                      onPress={() => refetch()}
+                    >
+                      <OutfitText style={tw`text-white  font-semibold`}>
+                        Refresh
+                      </OutfitText>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               )
             }

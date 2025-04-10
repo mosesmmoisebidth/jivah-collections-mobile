@@ -7,6 +7,7 @@ import CartItem, { CartItemSkeleton } from "@/components/cart/CartItem";
 import Header from "@/components/app/Header";
 import { StatusBar } from "expo-status-bar";
 import { OutfitText } from "@/components/StyledText";
+import { router } from "expo-router";
 
 export interface CartProps {}
 
@@ -18,15 +19,15 @@ const Cart: React.FC<CartProps> = () => {
     refetch,
   } = useGet<{ items: CartItemType[]; subTotal: number; discount: number }>(
     "/cart",
-    { authorized: true, refetchTime: 60000 }
+    { authorized: true }
   );
 
   const renderProduct = (item: CartItemType) => {
-    return <CartItem key={item.product.id} item={item} />;
+    return <CartItem key={item.product.id} item={item} refetch={refetch} />;
   };
 
   return (
-    <View style={tw`flex-1 bg-white mt-5`}>
+    <View style={tw`flex-1 bg-neutral-50 mt-5`}>
       <Header title="Your Cart" back />
       {loading ? (
         <View style={tw`flex-1 justify-center items-center p-4`}>
@@ -74,7 +75,7 @@ const Cart: React.FC<CartProps> = () => {
           <View style={tw`flex-row justify-between mb-3`}>
             <OutfitText style={tw`text-lg font-medium`}>Subtotal</OutfitText>
             <OutfitText style={tw`text-lg font-medium`}>
-              {Math.floor(cart.subTotal)} Rwf 
+              {Math.floor(cart.subTotal)} Rwf
             </OutfitText>
           </View>
           <View style={tw`flex-row justify-between mb-3`}>
@@ -86,7 +87,9 @@ const Cart: React.FC<CartProps> = () => {
 
           {/* Checkout Button */}
           <TouchableOpacity
-            onPress={() => {}}
+            onPress={() => {
+              router.push("/Checkout");
+            }}
             style={tw`mt-4 w-full bg-[#c48647] py-3 rounded-2xl`}
           >
             <OutfitText

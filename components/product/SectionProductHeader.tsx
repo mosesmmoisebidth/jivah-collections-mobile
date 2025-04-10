@@ -8,33 +8,52 @@ import {
 import tw from "twrnc";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 import ImageShowCase from "./ImageShowCase";
-import { ProductType } from "@/utils/types/product";
+import { DiscountType, ProductType } from "@/utils/types/product";
 import { router } from "expo-router";
 import addToCart from "@/utils/funcs";
 import InputNumber from "../shared/InputNumber";
-import { OutfitBold, OutfitText } from "../StyledText";
+import { OutfitBold, OutfitSemibold, OutfitText } from "../StyledText";
 
 const SectionProductHeader = ({ product }: { product: ProductType }) => {
   const { name, images, variants, category } = product;
   const [quantity, setQuantity] = useState(1);
-  const [selectedSize, setSelectedSize] = useState<string | null>("");
-  const [selectedColor, setSelectedColor] = useState<string | null>("");
+  const [selectedSize, setSelectedSize] = useState<string | null>(
+    product.variants[0].size
+  );
+  const [selectedColor, setSelectedColor] = useState<string | null>(
+    product.variants[0].color
+  );
   const [loading, setLoading] = useState<string | null>(null);
-
-  const filteredVariants = variants.filter(
-    (variant) =>
-      (!selectedSize || variant.size === selectedSize) &&
-      (!selectedColor || variant.color === selectedColor)
-  );
-
-  const selectedVariant = filteredVariants.find((variant) =>
-    variant.Inventory.some((inv) => inv.quantity > 0)
-  );
-
+  const filteredVariants = variants.filter((variant) => {
+    const isSizeMatch = selectedSize ? variant.size === selectedSize : true;
+    const isColorMatch = selectedColor ? variant.color === selectedColor : true;
+    return isSizeMatch && isColorMatch;
+  });
+  const selectedVariant = filteredVariants.find((variant) => {
+    const inventory = variant.Inventory.find((inv) => inv.quantity > 0);
+    return inventory !== undefined;
+  });
   const price = selectedVariant?.Inventory[0]?.price || 0;
-  const rating = 4.5;
-  const reviews = 200;
-  const pieces_sold = 150;
+
+  const discounts =
+    selectedVariant?.Inventory[0]?.discounts?.filter((d: DiscountType) => {
+      const now = new Date();
+      return new Date(d.startDate) <= now && new Date(d.endDate) >= now;
+    }) || [];
+  const finalDiscountPercentage =
+    discounts.reduce((acc, d) => {
+      const percentage = d.percentage / 100;
+      return acc + (1 - acc) * percentage;
+    }, 0) * 100;
+  const currentPrice = discounts.length
+    ? price * (1 - finalDiscountPercentage / 100)
+    : price;
+
+  const rating =
+    product.reviews.reduce((sum, review) => sum + review.rating, 0) /
+      product.reviews.length || 0;
+  const reviews = product.reviews.length;
+  const pieces_sold = product.soldQuantity || 0;
 
   const handleSelect = (type: string, value: string) => {
     if (type === "size") {
@@ -78,12 +97,16 @@ const SectionProductHeader = ({ product }: { product: ProductType }) => {
 
       {/* Price */}
       <View style={tw`mt-4`}>
-        <OutfitText style={tw`text-gray-500 line-through`}>
-          {price.toFixed(2)} Rwf
-        </OutfitText>
-        <OutfitBold style={tw`text-3xl font-medium text-[#eba046]`}>
-          {price.toFixed(2)} Rwf
-        </OutfitBold>
+        {price != currentPrice && (
+          <OutfitText style={tw` text-neutral-500 line-through`}>
+            {price.toFixed(0)} Rwf
+          </OutfitText>
+        )}
+        {currentPrice !== 0 && (
+          <OutfitSemibold style={tw`text-3xl `}>
+            {currentPrice.toFixed(0)} Rwf
+          </OutfitSemibold>
+        )}
       </View>
 
       {/* Available Sizes */}
@@ -99,7 +122,13 @@ const SectionProductHeader = ({ product }: { product: ProductType }) => {
                 }`}
                 onPress={() => handleSelect("size", size)}
               >
-                <OutfitText style={tw`text-center`}>{size}</OutfitText>
+                <OutfitText
+                  style={tw`text-center ${
+                    selectedSize === size ? " text-white" : "text-black"
+                  }`}
+                >
+                  {size}
+                </OutfitText>
               </TouchableOpacity>
             )
           )}
@@ -133,44 +162,46 @@ const SectionProductHeader = ({ product }: { product: ProductType }) => {
       </View>
 
       {/* Quantity & Actions */}
-      <View style={tw`mt-6 flex-row items-center`}>
-        <InputNumber
-          defaultValue={1}
-          max={selectedVariant?.Inventory.reduce(
-            (acc, item) => acc + (item.quantity || 0),
-            0
-          )}
-          onChange={setQuantity}
-        />
-        <TouchableOpacity
-          style={tw`ml-4 flex-1 py-3 bg-[#c48647] rounded-lg flex-row items-center justify-center`}
-          onPress={async () => {
-            if (!isVariantAvailable) return;
-            setLoading("buy");
-            try {
-              await addToCart({
-                inventoryId: selectedVariant?.Inventory[0]?.id,
-                quantity,
-              });
-            } catch (error) {
-            } finally {
-              setLoading(null);
-            }
-          }}
-          disabled={loading !== null}
-        >
-          {loading === "buy" ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <>
-              <Feather name="shopping-cart" size={20} color="white" />
-              <OutfitText style={tw`text-white OutfitText-center ml-2`}>
-                Buy Now
-              </OutfitText>
-            </>
-          )}
-        </TouchableOpacity>
-      </View>
+      {isVariantAvailable && (
+        <View style={tw`mt-6 flex-row items-center`}>
+          <InputNumber
+            defaultValue={1}
+            max={selectedVariant?.Inventory.reduce(
+              (acc, item) => acc + (item.quantity || 0),
+              0
+            )}
+            onChange={setQuantity}
+          />
+          <TouchableOpacity
+            style={tw`ml-4 flex-1 py-3 bg-[#c48647] rounded-lg flex-row items-center justify-center`}
+            onPress={async () => {
+              if (!isVariantAvailable) return;
+              setLoading("buy");
+              try {
+                await addToCart({
+                  inventoryId: selectedVariant?.Inventory[0]?.id,
+                  quantity,
+                });
+              } catch (error) {
+              } finally {
+                setLoading(null);
+              }
+            }}
+            disabled={loading !== null}
+          >
+            {loading === "buy" ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <>
+                <Feather name="shopping-cart" size={20} color="white" />
+                <OutfitText style={tw`text-white OutfitText-center ml-2`}>
+                  Buy Now
+                </OutfitText>
+              </>
+            )}
+          </TouchableOpacity>
+        </View>
+      )}
 
       {isVariantAvailable ? (
         <TouchableOpacity

@@ -115,7 +115,7 @@ const ResetPassword = () => {
             <TouchableOpacity
               onPress={handleResetPassword}
               disabled={isLoading}
-              style={tw`p-4 font-semibold text-2xl ${isLoading ? "bg-gray-400" : "bg-[#c48647]"} flex justify-center items-center rounded-full`}
+              style={tw`p-4 font-semibold text-2xl ${isLoading ? "bg-[#c48647]/50" : "bg-[#c48647]"} flex justify-center items-center rounded-full`}
             >
               <View style={tw`flex-row items-center`}>
                 {isLoading && <ActivityIndicator size="small" color="white" style={tw`mr-2`} />}

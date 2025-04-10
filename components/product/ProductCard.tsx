@@ -4,15 +4,18 @@ import React from "react";
 import { Image, TouchableOpacity, View } from "react-native";
 import tw from "twrnc";
 import { OutfitSemibold, OutfitText } from "../StyledText";
+import LikeButton from "./LikeButton";
 
 interface ProductCardProps {
   product: ProductType;
   layout?: "grid" | "list";
+  onFinishLikeDislike?: () => void;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
   product,
   layout = "list",
+  onFinishLikeDislike,
 }) => {
   const isGrid = layout === "grid";
 
@@ -20,10 +23,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
     <View
       style={tw`transitionEffect relative rounded-2xl p-1.5 border border-gray-200 my-2 `}
     >
+      <LikeButton
+        style={tw`absolute top-2 right-2 z-10`}
+        productId={product.productId}
+        liked={product.isFavorited}
+        onFinishLikeDislike={onFinishLikeDislike}
+      />
       <View
         style={tw`${
           isGrid ? "h-40" : "h-64"
-        } w-full overflow-hidden rounded-2xl`}
+        } w-full overflow-hidden rounded-2xl `}
       >
         <TouchableOpacity
           style={tw`h-full w-full`}

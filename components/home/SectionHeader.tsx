@@ -64,8 +64,8 @@ const SectionHeader = () => {
                   </View>
                 </View>
               ))
-          : products?.items.map((item) => (
-              <View key={item.id} style={[tw`pr-3`, { width: screenWidth }]}>
+          : products?.items.map((item,index) => (
+              <View key={index} style={[tw`pr-3`, { width: screenWidth }]}>
                 <View
                   style={tw`rounded-2xl bg-gray-100 p-3 flex-row items-center overflow-hidden`}
                 >
@@ -80,7 +80,11 @@ const SectionHeader = () => {
                     >
                       {item.name}
                     </OutfitBold>
-                    <OutfitText style={tw`text-neutral-500 text-sm w-[80%]`}>
+                    <OutfitText
+                      style={tw`text-neutral-500 text-sm w-[80%]`}
+                      numberOfLines={3}
+                      ellipsizeMode="tail"
+                    >
                       {item.description || "Product description goes here..."}
                     </OutfitText>
                     <TouchableOpacity

@@ -105,7 +105,7 @@ const Account = () => {
   }
 
   return (
-    <SafeAreaView style={tw`flex-1 bg-white pt-6`}>
+    <SafeAreaView style={tw`flex-1 bg-neutral-50 pt-6`}>
       <View style={tw`items-center mb-6`}>
         <View style={tw`flex flex-col items-center`}>
           {userData?.profileImage ? (

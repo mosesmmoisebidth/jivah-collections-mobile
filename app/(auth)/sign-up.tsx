@@ -143,6 +143,7 @@ const SignUp = () => {
               label_name="Email"
               placeholder="e.g. johndoe@example.com"
               value={formData.email}
+              keyboardType="email-address"
               onChangeText={(text) => handleInputChange("email", text)}
               prefixIcon={<Ionicons name="mail" size={20} color="gray" />}
               errorMessage={errors.email}
@@ -152,6 +153,7 @@ const SignUp = () => {
               type="text"
               label_name="Phone Number"
               placeholder="Enter your phone number"
+              keyboardType="phone-pad"
               value={formData.phoneNumber}
               onChangeText={(text) => handleInputChange("phoneNumber", text)}
               prefixIcon={<Ionicons name="call" size={20} color="gray" />}
@@ -188,8 +190,8 @@ const SignUp = () => {
               onPress={handleRegister}
               disabled={isLoading}
               style={tw`p-4 font-semibold text-xl ${
-                isLoading ? "bg-gray-400" : "bg-[#c48647]"
-              } flex justify-center items-center rounded-full shadow-lg`}
+                isLoading ? "bg-[#c48647]/50" : "bg-[#c48647]"
+              } flex justify-center items-center rounded-2xl shadow-lg`}
             >
               <View style={tw`flex-row items-center`}>
                 {isLoading && (
@@ -199,7 +201,7 @@ const SignUp = () => {
                     style={tw`mr-2`}
                   />
                 )}
-                <OutfitText style={tw`text-white text-lg`}>
+                <OutfitText style={tw`text-white `}>
                   {isLoading ? "Registering..." : "Register"}
                 </OutfitText>
               </View>
@@ -213,7 +215,7 @@ const SignUp = () => {
             </View>
 
             <TouchableOpacity
-              style={tw`py-4 px-6 rounded-full border border-gray-300 flex flex-row items-center justify-center gap-3`}
+              style={tw`py-4 px-6 rounded-2xl border border-gray-300 flex flex-row items-center justify-center gap-3`}
             >
               <Image
                 source={AppImages.googleIcon}

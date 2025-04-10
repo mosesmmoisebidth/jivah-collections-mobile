@@ -51,8 +51,8 @@ const SectionTrending = () => {
         >
           {[...(products?.items || [])]
             .sort(() => Math.random() - 0.5)
-            .map((item) => (
-              <View key={item.id} style={[tw`pr-2`, { width: screenWidth }]}>
+            .map((item,index) => (
+              <View key={index} style={[tw`pr-2`, { width: screenWidth }]}>
                 <ProductCard product={item} />
               </View>
             ))}

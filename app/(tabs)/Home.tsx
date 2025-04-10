@@ -53,12 +53,12 @@ export default function Home() {
   const { width } = Dimensions.get("screen");
 
   return (
-    <SafeAreaView style={tw`bg-white`}>
+    <SafeAreaView style={tw`bg-neutral-50`}>
       {/* Header */}
       <Header cart />
 
       {/* Main Content */}
-      <ScrollView style={tw`bg-white gap-3  `} nestedScrollEnabled>
+      <ScrollView style={tw`bg-neutral-50 gap-3  `} nestedScrollEnabled>
         <View style={tw` px-3 gap-4 mb-3`}>
           <SectionHeader />
         </View>
@@ -80,7 +80,7 @@ export default function Home() {
                 if (text.trim()) {
                   router.push({
                     pathname: "/(tabs)/OurShop",
-                    params: { searchQuery: text },
+                    params: { search: text },
                   });
                 }
               }}

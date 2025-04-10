@@ -1,278 +1,305 @@
+import { SafeAreaView, ScrollView, TouchableOpacity, View } from "react-native";
 import {
-  View,
-  Text,
-  SafeAreaView,
-  ScrollView,
-  TextInput as DefaultTextInput,
-  TouchableOpacity,
-  Image,
-  ActivityIndicator,
-} from "react-native";
-import React, { useState, useEffect } from "react";
+  OutfitBold,
+  OutfitSemibold,
+  OutfitText,
+} from "@/components/StyledText";
+import { TextInput } from "react-native-gesture-handler";
+import CartItem, { CartItemSkeleton } from "@/components/cart/CartItem";
+import ShippingAddress from "@/components/checkout/ShippingAddress";
+import { CartItemType } from "@/utils/types/product";
+import ApiService from "@/services/api";
+import { useEffect, useState } from "react";
+import useGet from "@/hooks/useGet";
+import AuthService from "@/services/api/auth";
+import Toast from "react-native-toast-message";
+import { WaveIndicator } from "react-native-indicators";
 import Header from "@/components/app/Header";
-import { StatusBar } from "expo-status-bar";
 import tw from "twrnc";
-import { OutfitBold, OutfitText } from "@/components/StyledText";
-import TextInput from "@/components/app/TextInput";
-import CheckboxInput from "@/components/app/CheckboxInput";
-import { useNavigation } from "expo-router";
-import ProductService from "@/services/api/product";
+import { router } from "expo-router";
 
 const Checkout = () => {
-  const payment_company = [
-    { id: 1, name: "MTN", img: require("../assets/images/mtn.png") },
-    { id: 2, name: "AIRTEL", img: require("../assets/images/airtel.png") },
-    { id: 3, name: "VISA", img: require("../assets/images/visa.png") },
-  ];
+  const {
+    data: cart,
+    loading: loadingCart,
+    error,
+    refetch,
+  } = useGet<{ items: CartItemType[]; subTotal: number; discount: number }>(
+    `/cart`,
+    { authorized: true }
+  );
+  const [userData, setUserData] = useState<any>({
+    name: "",
+    username: "",
+    phone: "",
+    email: "",
+  });
+  const [loading, setLoading] = useState(true);
 
-  const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [description, setDescription] = useState("");
-  const [isChecked, setIsChecked] = useState(false);
-  const [showCouponInput, setShowCouponInput] = useState(false);
-  const [couponCode, setCouponCode] = useState("");
-  const [cart, setCart] = useState<any[]>([]); // Initialize cart with an empty array
-  const [loading, setLoading] = useState(false);
-  const navigation = useNavigation();
-
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerShown: false, // Disable header here
-    });
-  }, [navigation]);
-
-  const fetchProducts = async () => {
-    setLoading(true);
-    try {
-      const response = await ProductService.viewCart();
-      console.log(response?.products);
-      setCart(response?.products || []);
-    } finally {
-      setLoading(false);
-    }
+  const fetchUserProfile = async () => {
+    const response = await AuthService.getProfile();
+    console.log(response);
+    setUserData(response);
+    setLoading(false);
   };
 
   useEffect(() => {
-    fetchProducts(); // Fetch the products when the component mounts
+    fetchUserProfile();
   }, []);
+  const [makingOrder, setMakingOrder] = useState(false);
+  const [clientData, setClientData] = useState({
+    name: userData.name,
+    email: userData.email,
+    phone: userData.phone,
+    address: "",
+    city: "",
+    country: "",
+    state: "",
+    addressType: "",
+  });
+  const [tabActive, setTabActive] = useState<"ShippingAddress" | "ContactInfo">(
+    "ShippingAddress"
+  );
+  const handleMakeOrder = async ({
+    client,
+    items,
+    setMakingOrder,
+  }: {
+    client: {
+      name: string;
+      email: string;
+      phone?: string;
+      address: string;
+      city: string;
+      country: string;
+      state: string;
+    };
+    items: {
+      inventoryId: string;
+      quantity: number;
+      amount: number;
+    }[];
+    setMakingOrder: (value: boolean) => void;
+  }) => {
+    setMakingOrder(true);
+    console.log({ client, items });
+    try {
+      await ApiService.authorized.post("/sales/order", {
+        client,
+        items,
+      });
+      Toast.show({
+        type: "success",
+        position: "bottom",
+        text1: "Order made successfully",
+      });
+    } catch (err: any) {
+      Toast.show({
+        type: "error",
+        position: "bottom",
+        text1:
+          err.response?.data?.message ||
+          "An error occurred while making order. Please try again.",
+      });
+    } finally {
+      setMakingOrder(false);
+    }
+  };
+  const renderProduct = (item: CartItemType) => {
+    return <CartItem key={item.product.id} item={item} />;
+  };
+
+  const renderLeft = () => {
+    return (
+      <View>
+        <View id="ShippingAddress">
+          <ShippingAddress
+            data={clientData}
+            onChange={(field, value) =>
+              setClientData((prev) => ({ ...prev, [field]: value }))
+            }
+          />
+        </View>
+      </View>
+    );
+  };
+
+  if ((!cart || cart.items.length === 0) && !loading && !error) {
+    return (
+      <SafeAreaView style={tw`nc-CheckoutPage`}>
+        <Header title="Checkout" back />
+        <View
+          style={tw`mx-auto flex flex-col  items-center justify-center gap-5 px-3 py-24`}
+        >
+          <OutfitBold style={tw`text-[100px] font-extrabold text-[#c48647]`}>
+            Empty
+          </OutfitBold>
+          <OutfitSemibold style={tw`text-4xl font-semibold`}>
+            Your Cart is Empty
+          </OutfitSemibold>
+          <OutfitText style={tw`text-neutral-500`}>
+            It looks like you don&apos;t have any items in your cart right now.
+            Add some items and come back to checkout later!
+          </OutfitText>
+          <View style={tw`flex items-center justify-center gap-5`}>
+            <TouchableOpacity
+              style={tw`bg-[#c48647] px-10 py-3 rounded-2xl`}
+              onPress={() => {
+                router.push("/OurShop");
+              }}
+            >
+              <OutfitText style={tw`text-white`}>Start Shopping</OutfitText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                router.push("/Home");
+              }}
+              style={tw`border-2 border-[#c48647] text-[#c48647] px-10 py-3 rounded-2xl`}
+            >
+              <OutfitText>Go Home</OutfitText>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (error) {
+    const errorMessage =
+      error || "An unexpected error occurred. Please try again later.";
+
+    return (
+      <SafeAreaView style={tw`nc-CheckoutPage`}>
+        <Header title="Checkout" back />
+        <View
+          style={tw`mx-auto flex max-w-2xl flex-col items-center justify-center gap-5 px-3 py-24`}
+        >
+          <OutfitBold style={tw`text-[100px] font-extrabold text-[#c48647]`}>
+            Error
+          </OutfitBold>
+          <OutfitSemibold style={tw`text-4xl font-semibold`}>
+            Oops, something went wrong
+          </OutfitSemibold>
+          <OutfitText style={tw`text-neutral-500`}>{errorMessage}</OutfitText>
+          <View style={tw`flex items-center justify-center gap-5`}>
+            <TouchableOpacity
+              style={tw`bg-[#c48647] px-10 py-3 rounded-2xl`}
+              onPress={() => refetch()}
+            >
+              <OutfitText>Try Again</OutfitText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={tw`border-2 border-[#c48647] text-[#c48647] px-10 py-3 rounded-2xl`}
+            >
+              <OutfitText>Go Home</OutfitText>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <WaveIndicator color="#c48647" size={60} />
+      </View>
+    );
+  }
 
   return (
-    <SafeAreaView style={tw`bg-white flex-1 pt-6`}>
+    <SafeAreaView style={tw`nc-CheckoutPage`}>
       <Header title="Checkout" back />
-
-      <ScrollView style={tw`bg-white pt-3`}>
-        <View style={tw`mb-[2rem] px-3 flex-col gap-10`}>
-          <View
-            style={tw`border border-gray-400 rounded-lg px-3 py-4 flex-col gap-y-3`}
-          >
-            <OutfitBold style={tw`text-base`}>Billing details</OutfitBold>
-            <TextInput
-              label={true}
-              type="text"
-              label_name="First Name"
-              placeholder="First Name"
-              value={firstName}
-              onChangeText={setFirstName}
-            />
-            <TextInput
-              type="text"
-              label_name="Last Name"
-              placeholder="Last Name"
-              value={lastName}
-              onChangeText={setLastName}
-            />
-            <TextInput
-              label_name="Phone"
-              placeholder="Phone"
-              value={phone}
-              onChangeText={setPhone}
-              type="text"
-            />
-            <TextInput
-              label_name="Description"
-              placeholder="Enter a detailed description"
-              value={description}
-              onChangeText={setDescription}
-              type="textarea"
-            />
-            <CheckboxInput
-              label="I agree to the terms and conditions"
-              isChecked={isChecked}
-              onChange={(checked) => setIsChecked(checked)}
-            />
-            {isChecked && (
-              <View style={tw`p-4 rounded-md flex-col gap-2`}>
-                <TextInput
-                  type="text"
-                  label_name="First Name"
-                  placeholder="First Name"
-                  value={firstName}
-                  onChangeText={setFirstName}
-                />
-                <TextInput
-                  type="text"
-                  label_name="Last Name"
-                  placeholder="Last Name"
-                  value={lastName}
-                  onChangeText={setLastName}
-                />
-                <TextInput
-                  label_name="Description"
-                  placeholder="Enter a detailed description"
-                  value={description}
-                  onChangeText={setDescription}
-                  type="textarea"
-                />
-              </View>
-            )}
-          </View>
+      <ScrollView>
+        <View style={tw`flex flex-col p-3  pb-20`}>
+          <View>{renderLeft()}</View>
 
           <View
-            style={tw`border border-gray-400 rounded-lg px-3 py-4 flex-col gap-5`}
-          >
-            <OutfitBold style={tw`text-base`}>Your Order</OutfitBold>
-            {/* Order items */}
-            {loading ? (
-              <ActivityIndicator size="large" color="#c48647" />
-            ) : (
-              <>
-                {cart.length > 0 ? (
-                  cart.map((item) => (
-                    <View
-                      key={item.id}
-                      style={tw`flex-row justify-between items-center`}
-                    >
-                      <OutfitText>
-                        {item.product_name} × {item.quantity}
-                      </OutfitText>
-                      <OutfitText>{`${
-                        item.sale_price * item.quantity
-                      } Rwf`}</OutfitText>
-                    </View>
-                  ))
-                ) : (
-                  <Text style={tw`text-gray-500`}>No items in your cart.</Text>
-                )}
-              </>
-            )}
+            style={tw` my-3  shrink-0 border-t border-neutral-300 lg:mx-10 lg:my-0 lg:border-l lg:border-t-0 xl:lg:mx-14 2xl:mx-16`}
+          />
 
-            <View style={tw`flex-row justify-between items-center`}>
-              <OutfitText style={tw`text-gray-500`}>Shipping</OutfitText>
-              <OutfitText style={tw`text-gray-500`}>Free shipping</OutfitText>
+          <View style={tw`w-full `}>
+            <OutfitSemibold style={tw`text-xl `}>Order summary</OutfitSemibold>
+            <View style={tw`divide-y divide-neutral-300`}>
+              {loadingCart ? (
+                Array.from({ length: 4 }).map((_, index) => (
+                  <CartItemSkeleton key={index} />
+                ))
+              ) : error ? (
+                <View style={tw`text-red-500`}>Failed to load cart items.</View>
+              ) : (
+                cart?.items?.map(renderProduct)
+              )}
             </View>
 
-            <View style={tw`flex-row justify-between items-center`}>
-              <OutfitText style={tw`text-gray-500`}>Total</OutfitText>
-              <OutfitText style={tw`text-gray-500`}>
-                Fr{" "}
-                {cart.reduce(
-                  (total, item) => total + item.price * item.quantity,
-                  0
-                )}
-              </OutfitText>
-            </View>
-          </View>
-
-          <View
-            style={tw`border border-gray-400 rounded-lg px-3 py-4 flex-col gap-5`}
-          >
-            <OutfitText>
-              Have a coupon?{" "}
-              <TouchableOpacity
-                onPress={() => setShowCouponInput(!showCouponInput)}
-              >
-                <OutfitText style={tw`text-blue-400 text-base`}>
-                  Click here to enter your coupon code
-                </OutfitText>
-              </TouchableOpacity>
-            </OutfitText>
-
-            {showCouponInput && (
-              <View>
-                <TextInput
-                  label_name="If you have a coupon code, please apply it below."
-                  type="text"
-                  placeholder="Coupon code"
-                  onChangeText={setCouponCode}
-                  value={couponCode}
-                />
-                <TouchableOpacity
-                  style={tw`p-4 border-2 tracking-light border-blue-400 w-[5rem] mt-4`}
-                >
-                  <OutfitText>APPLY</OutfitText>
-                </TouchableOpacity>
-              </View>
-            )}
-          </View>
-
-          <View style={tw`border border-gray-400 rounded-lg px-2 py-4`}>
-            <Image source={require("../assets/images/urubuto.png")} />
-            <View style={tw`py-4 flex-col gap-3`}>
-              <OutfitText>Choose A Payment Mode</OutfitText>
-              <View>
-                <Text style={tw`text-lg font-bold`}>
-                  Select a Payment Company
-                </Text>
-                <View style={tw`flex-row gap-4 items-center flex-wrap py-3`}>
-                  {payment_company.map((company) => (
-                    <TouchableOpacity
-                      key={company.id}
-                      style={[
-                        tw`flex-row items-center gap-2 rounded-md`,
-                        selectedId === company.id
-                          ? tw`border-blue-500 bg-blue-100`
-                          : tw`border-gray-300 bg-gray-100`,
-                      ]}
-                      onPress={() => setSelectedId(company.id)}
-                    >
-                      <View
-                        style={tw`w-5 h-5 border-2 rounded-full ${
-                          selectedId === company.id
-                            ? "bg-blue-500"
-                            : "bg-gray-200"
-                        }`}
-                      />
-                      <Image source={company.img} style={tw``} />
-                    </TouchableOpacity>
-                  ))}
+            <View style={tw` border-t border-neutral-300 pt-2 text-sm`}>
+              <View style={tw` border-b border-neutral-300 pb-3 mb-2 text-sm`}>
+                <OutfitText style={tw`text-sm`}>Discount code</OutfitText>
+                <View style={tw`mt-1.5 flex flex-row`}>
+                  <TextInput
+                    style={tw`flex-1 border-neutral-200 bg-transparent placeholder:text-neutral-500  border rounded-2xl `}
+                  />
+                  <TouchableOpacity
+                    style={tw`ml-3 flex w-24 items-center justify-center rounded-2xl border border-neutral-200 bg-gray px-4 py-3 text-sm font-medium transition-colors hover:bg-neutral-100`}
+                  >
+                    <OutfitText>Apply</OutfitText>
+                  </TouchableOpacity>
                 </View>
-
-                {selectedId && (
-                  <Text style={tw`mt-4 text-green-500`}>
-                    Selected:{" "}
-                    {payment_company.find((c) => c.id === selectedId)?.name}
-                  </Text>
-                )}
               </View>
-              <TextInput
-                type="text"
-                label_name="Phone"
-                placeholder="Enter Phone Number (MTN or AIRTEL)"
-                value={phone}
-                onChangeText={setPhone}
-              />
-            </View>
 
-            <OutfitText style={tw`pb-3`}>
-              Your personal data will be used to process your order, support
-              your experience throughout this website, and for other purposes
-              described in our
-              <OutfitText style={tw`text-blue-400 text-base`}>
-                privacy policy.
-              </OutfitText>
-            </OutfitText>
+              <View style={tw`flex flex-row justify-between`}>
+                <View>
+                  <OutfitText style={tw`font-medium`}>Subtotal</OutfitText>
+                  <OutfitText style={tw`block text-sm text-neutral-500`}>
+                    Shipping and taxes calculated at checkout.
+                  </OutfitText>
+                </View>
+                <OutfitText style={tw`text-xl font-medium`}>
+                  {Math.floor(cart?.subTotal || 0)} Rwf
+                </OutfitText>
+              </View>
+
+              <View style={tw`flex flex-row justify-between`}>
+                <View>
+                  <OutfitText style={tw`font-medium`}>Discount</OutfitText>
+                </View>
+                <OutfitText style={tw`text-xl font-medium`}>
+                  -{Math.floor(cart?.discount || 9)} Rwf
+                </OutfitText>
+              </View>
+
+              <View style={tw`flex flex-row justify-between`}>
+                <View>
+                  <OutfitText style={tw`font-medium`}>Total</OutfitText>
+                </View>
+                <OutfitText style={tw`text-xl font-medium`}>
+                  {Math.floor((cart?.subTotal || 0) - (cart?.discount || 0))}{" "}
+                  Rwf
+                </OutfitText>
+              </View>
+            </View>
             <TouchableOpacity
-              style={tw`py-4 rounded-lg w-full bg-[#c48647] flex justify-center items-center`}
+              onPress={() =>
+                handleMakeOrder({
+                  client: clientData,
+                  items:
+                    cart?.items.map((it) => ({
+                      inventoryId: it.inventoryId,
+                      quantity: it.quantity,
+                      amount: it.price,
+                    })) || [],
+                  setMakingOrder: setMakingOrder,
+                })
+              }
+              style={tw`mt-8 w-full bg-[#c48647] py-4 rounded-2xl`}
             >
-              <OutfitText style={tw`text-white`}>PLACE ORDER</OutfitText>
+              <OutfitSemibold style={tw`text-white text-center text-base`}>
+                Confirm order
+              </OutfitSemibold>
             </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
-
-      <StatusBar backgroundColor="transparent" style="dark" />
     </SafeAreaView>
   );
 };
