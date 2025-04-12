@@ -22,6 +22,7 @@ import AppImages from "@/utils/constants/images";
 import { Ionicons } from "@expo/vector-icons";
 import { Register } from "../../utils/types/auth";
 import AuthService from "@/services/api/auth";
+import GoogleAuth from "@/components/auth/GoogleAuth";
 
 const SignUp = () => {
   const [formData, setFormData] = useState<Register>({
@@ -94,7 +95,7 @@ const SignUp = () => {
     if (!validateForm()) return;
     setIsLoading(true);
     await AuthService.register(formData, () => {
-      router.push("/(tabs)/Home");
+      router.replace("/(tabs)/Home");
     });
     setIsLoading(false);
   };
@@ -214,16 +215,7 @@ const SignUp = () => {
               <Separator />
             </View>
 
-            <TouchableOpacity
-              style={tw`py-4 px-6 rounded-2xl border border-gray-300 flex flex-row items-center justify-center gap-3`}
-            >
-              <Image
-                source={AppImages.googleIcon}
-                resizeMode="contain"
-                style={tw`w-5 h-5`}
-              />
-              <OutfitText>Continue with Google</OutfitText>
-            </TouchableOpacity>
+            <GoogleAuth />
 
             <OutfitText style={tw`text-center mt-6`}>
               Already have an account?{" "}

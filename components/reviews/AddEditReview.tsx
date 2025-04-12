@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
   View,
-  Text,
   TextInput,
   TouchableOpacity,
   Image,
@@ -12,17 +11,20 @@ import Toast from "react-native-toast-message";
 import { Svg, Path } from "react-native-svg";
 import * as ImagePicker from "expo-image-picker";
 import ApiService from "@/services/api";
+import { OutfitBold, OutfitSemibold, OutfitText } from "../StyledText";
 
 interface AddEditReviewProps {
   productId: string;
   defaultData?: { id: string; comment: string; image: string; rating: number };
   onClose: () => void;
+  onCancel: () => void;
 }
 
 const AddEditReview: React.FC<AddEditReviewProps> = ({
   productId,
   defaultData,
   onClose,
+  onCancel,
 }) => {
   const [comment, setComment] = useState(defaultData?.comment || "");
   const [image, setImage] = useState(defaultData?.image || "");
@@ -93,13 +95,15 @@ const AddEditReview: React.FC<AddEditReviewProps> = ({
   };
 
   return (
-    <View style={tw`p-5 bg-neutral-50 rounded-t-2xl`}>
-      <Text style={tw`text-xl font-semibold mb-4`}>
+    <View style={tw`pb-10`}>
+      <OutfitBold style={tw`text-xl font-semibold mb-4`}>
         {defaultData ? "Edit Review" : "Add Review"}
-      </Text>
+      </OutfitBold>
 
       {/* Rating */}
-      <Text style={tw`text-sm font-semibold mb-2`}>Rating</Text>
+      <OutfitSemibold style={tw`text-sm font-semibold mb-2`}>
+        Rating
+      </OutfitSemibold>
       <View style={tw`flex-row mb-4`}>
         {[...Array(5)].map((_, index) => (
           <TouchableOpacity key={index} onPress={() => handleRating(index)}>
@@ -116,21 +120,25 @@ const AddEditReview: React.FC<AddEditReviewProps> = ({
       </View>
 
       {/* Comment */}
-      <Text style={tw`text-sm font-semibold mb-2`}>Comment</Text>
+      <OutfitText style={tw`text-sm font-semibold mb-2`}>Comment</OutfitText>
       <TextInput
         value={comment}
         onChangeText={setComment}
         placeholder="Enter review comment"
-        style={tw`w-full p-3 border rounded-lg mb-4`}
+        style={tw`w-full p-3 border border-neutral-300 rounded-lg mb-4`}
       />
 
       {/* Image Upload */}
-      <Text style={tw`text-sm font-semibold mb-2`}>Image (optional)</Text>
+      <OutfitText style={tw`text-sm font-semibold mb-2`}>
+        Image (optional)
+      </OutfitText>
       <TouchableOpacity
         onPress={handleImagePick}
-        style={tw`border p-3 rounded-lg mb-4`}
+        style={tw`border border-neutral-300 p-3 rounded-lg mb-4`}
       >
-        <Text style={tw`text-center text-blue-500`}>Pick an Image</Text>
+        <OutfitText style={tw`text-center text-neutral-500`}>
+          Pick an Image
+        </OutfitText>
       </TouchableOpacity>
 
       {image ? (
@@ -143,23 +151,23 @@ const AddEditReview: React.FC<AddEditReviewProps> = ({
       {/* Buttons */}
       <View style={tw`flex-row justify-between`}>
         <TouchableOpacity
-          onPress={onClose}
-          style={tw`bg-gray-300 px-4 py-3 rounded-lg flex-1 mr-2`}
+          onPress={onCancel}
+          style={tw`border border-[#c48647] px-4 py-3 rounded-lg flex-1 mr-2`}
         >
-          <Text style={tw`text-center text-black`}>Cancel</Text>
+          <OutfitText style={tw`text-center text-black`}>Cancel</OutfitText>
         </TouchableOpacity>
 
         <TouchableOpacity
           onPress={handleSubmit}
-          style={tw`bg-green-500 px-4 py-3 rounded-lg flex-1 ml-2`}
+          style={tw`bg-[#c48647] px-4 py-3 rounded-lg flex-1 ml-2`}
           disabled={loading}
         >
           {loading ? (
             <ActivityIndicator color="white" />
           ) : (
-            <Text style={tw`text-center text-white font-semibold`}>
+            <OutfitText style={tw`text-center text-white font-semibold`}>
               {defaultData ? "Update Review" : "Add Review"}
-            </Text>
+            </OutfitText>
           )}
         </TouchableOpacity>
       </View>

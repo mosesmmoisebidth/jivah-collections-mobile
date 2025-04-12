@@ -1,5 +1,12 @@
 import React from "react";
-import { View, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
+import {
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import Modal from "react-native-modal";
 import { Feather } from "@expo/vector-icons";
 
@@ -26,16 +33,19 @@ const BottomDialog: React.FC<BottomDialogProps> = ({
       style={styles.modal}
       animationIn="slideInUp"
       animationOut="slideOutDown"
+      avoidKeyboard={true}
     >
-      <View style={[styles.dialogContainer, { height: modalHeight }]}>
-        {/* Close Button */}
-        <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-          <Feather name="x" size={24} color="black" />
-        </TouchableOpacity>
-
-        {/* Content */}
-        <View style={styles.content}>{children}</View>
-      </View>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+      >
+        <View style={[styles.dialogContainer, { height: modalHeight }]}>
+          <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+            <Feather name="x" size={24} color="black" />
+          </TouchableOpacity>
+          <View style={styles.content}>{children}</View>
+        </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 };

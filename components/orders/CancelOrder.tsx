@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   View,
-  Text,
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
@@ -9,6 +8,7 @@ import {
 import tw from "twrnc";
 import Toast from "react-native-toast-message";
 import ApiService from "@/services/api";
+import { OutfitBold, OutfitText } from "../StyledText";
 
 interface CancelOrderProps {
   onSuccess?: () => void;
@@ -52,17 +52,17 @@ const CancelOrder: React.FC<CancelOrderProps> = ({
   };
 
   return (
-    <View style={tw`p-5 bg-neutral-50 rounded-lg`}>
-      <Text style={tw`text-xl font-semibold mb-4`}>Cancel Order</Text>
+    <View >
+      <OutfitBold style={tw`text-xl font-semibold mb-4`}>Cancel Order</OutfitBold>
 
       {/* Reason Input */}
-      <Text style={tw`text-sm font-semibold mb-2`}>Reason</Text>
+      <OutfitText style={tw`text-sm font-semibold mb-2`}>Reason</OutfitText>
       <TextInput
         value={description}
         onChangeText={setDescription}
         placeholder="Enter reason for cancellation"
         multiline
-        style={tw`w-full p-3 border rounded-lg mb-4`}
+        style={tw`w-full p-3 border border-neutral-300 rounded-lg mb-4`}
       />
 
       {/* Buttons */}
@@ -72,7 +72,7 @@ const CancelOrder: React.FC<CancelOrderProps> = ({
           style={tw`bg-gray-300 px-4 py-3 rounded-lg flex-1 mr-2`}
           disabled={loading}
         >
-          <Text style={tw`text-center text-black`}>Cancel</Text>
+          <OutfitText style={tw`text-center text-black`}>Cancel</OutfitText>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -83,9 +83,9 @@ const CancelOrder: React.FC<CancelOrderProps> = ({
           {loading ? (
             <ActivityIndicator color="white" />
           ) : (
-            <Text style={tw`text-center text-white font-semibold`}>
+            <OutfitText style={tw`text-center text-white font-semibold`}>
               Cancel Order
-            </Text>
+            </OutfitText>
           )}
         </TouchableOpacity>
       </View>

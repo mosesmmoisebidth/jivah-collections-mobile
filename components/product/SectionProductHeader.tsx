@@ -58,10 +58,14 @@ const SectionProductHeader = ({ product }: { product: ProductType }) => {
   const handleSelect = (type: string, value: string) => {
     if (type === "size") {
       setSelectedSize(value);
-      setSelectedColor(null);
+      setSelectedColor(
+        product.variants.find((variant) => variant.size == value)?.color || null
+      );
     } else {
       setSelectedColor(value);
-      setSelectedSize(null);
+      setSelectedSize(
+        product.variants.find((variant) => variant.color == value)?.size || null
+      );
     }
   };
 
@@ -182,6 +186,7 @@ const SectionProductHeader = ({ product }: { product: ProductType }) => {
                   inventoryId: selectedVariant?.Inventory[0]?.id,
                   quantity,
                 });
+                router.push("/Checkout");
               } catch (error) {
               } finally {
                 setLoading(null);

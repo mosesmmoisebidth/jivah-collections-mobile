@@ -19,11 +19,12 @@ const Orders = () => {
     search: "",
     status: "",
     startDate: new Date(2020, 0, 1).toISOString().split("T")[0],
-    endDate: new Date(new Date().getFullYear(), 0, 11)
+    endDate: new Date(new Date().getFullYear(), 11, 31)
       .toISOString()
       .split("T")[0],
   });
 
+  console.log(filters);
   const {
     data: ordersData,
     loading,
@@ -35,9 +36,9 @@ const Orders = () => {
     page: number;
     limit: number;
   }>(
-    `/sales/mine/?type=ORDER&page=${pagination.page}&limit=${
-      pagination.limit
-    }&search=${encodeURIComponent(filters.search)}&status=${encodeURIComponent(
+    `/sales/mine/?type=ORDER&page=1&limit=100&search=${encodeURIComponent(
+      filters.search
+    )}&status=${encodeURIComponent(
       filters.status
     )}&startDate=${encodeURIComponent(
       filters.startDate
@@ -47,6 +48,7 @@ const Orders = () => {
     }
   );
 
+  console.log(ordersData);
   useEffect(() => {
     refetch();
   }, [pagination, filters]);
@@ -83,9 +85,9 @@ const Orders = () => {
           </TouchableOpacity> */}
         </View>
       </View>
-      <ScrollView style={tw`p-2`}>
+      <ScrollView style={tw`p-2 `}>
         {loading && (
-          <View style={tw`gap-y-4`}>
+          <View style={tw`gap-y-4 pb-20`}>
             {Array(8)
               .fill(null)
               .map((_, index) => (
@@ -126,7 +128,7 @@ const Orders = () => {
           </View>
         )}
         {!loading && !error && (
-          <View style={tw`space-y-4`}>
+          <View style={tw`space-y-4 pb-20 `}>
             {ordersData?.items.length === 0 ? (
               <View
                 style={tw`w-full flex flex-col items-center justify-center gap-3 py-24`}
@@ -180,7 +182,7 @@ const Orders = () => {
                 <View style={tw`space-y-4`}>
                   {" "}
                   {ordersData?.items.map((order) => (
-                    <OrderItem key={order.id} order={order} />
+                    <OrderItem key={order.id} order={order} refetch={refetch} />
                   ))}
                 </View>
               </>

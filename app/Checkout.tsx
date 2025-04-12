@@ -1,4 +1,10 @@
-import { SafeAreaView, ScrollView, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  SafeAreaView,
+  ScrollView,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import {
   OutfitBold,
   OutfitSemibold,
@@ -17,6 +23,7 @@ import { WaveIndicator } from "react-native-indicators";
 import Header from "@/components/app/Header";
 import tw from "twrnc";
 import { router } from "expo-router";
+import PaymentInfo from "@/components/checkout/PaymentInfo";
 
 const Checkout = () => {
   const {
@@ -40,6 +47,15 @@ const Checkout = () => {
     const response = await AuthService.getProfile();
     console.log(response);
     setUserData(response);
+    setClientData({
+      name: response.name,
+      email: response.email,
+      phone: response.phone,
+      address: clientData.address,
+      city: clientData.city,
+      country: clientData.country,
+      addressType: clientData.addressType,
+    });
     setLoading(false);
   };
 
@@ -54,8 +70,11 @@ const Checkout = () => {
     address: "",
     city: "",
     country: "",
-    state: "",
     addressType: "",
+  });
+  const [paymentInfo, setPaymentInfo] = useState({
+    accountNumber: "",
+    provider: "AIRTEL",
   });
   const [tabActive, setTabActive] = useState<"ShippingAddress" | "ContactInfo">(
     "ShippingAddress"
@@ -64,6 +83,7 @@ const Checkout = () => {
     client,
     items,
     setMakingOrder,
+    paymentInfo,
   }: {
     client: {
       name: string;
@@ -72,7 +92,10 @@ const Checkout = () => {
       address: string;
       city: string;
       country: string;
-      state: string;
+    };
+    paymentInfo: {
+      provider: "AIRTEL" | "MTN";
+      accountNumber: string;
     };
     items: {
       inventoryId: string;
@@ -81,18 +104,38 @@ const Checkout = () => {
     }[];
     setMakingOrder: (value: boolean) => void;
   }) => {
+    console.log(client, paymentInfo);
+    if (
+      !client.name ||
+      !client.email ||
+      !client.address ||
+      !client.city ||
+      !client.country ||
+      !paymentInfo.accountNumber ||
+      !paymentInfo.provider ||
+      items.length === 0 ||
+      items.some((item) => !item.inventoryId || !item.quantity || !item.amount)
+    ) {
+      Toast.show({
+        type: "error",
+        position: "bottom",
+        text1: "Please fill in all required fields.",
+      });
+      return;
+    }
     setMakingOrder(true);
-    console.log({ client, items });
     try {
       await ApiService.authorized.post("/sales/order", {
         client,
         items,
+        paymentInfo,
       });
       Toast.show({
         type: "success",
         position: "bottom",
         text1: "Order made successfully",
       });
+      router.push("/Orders");
     } catch (err: any) {
       Toast.show({
         type: "error",
@@ -120,11 +163,19 @@ const Checkout = () => {
             }
           />
         </View>
+        <View id="PaymentInfo" style={tw`mt-5`}>
+          <PaymentInfo
+            data={paymentInfo}
+            onChange={(field, value) =>
+              setPaymentInfo((prev) => ({ ...prev, [field]: value }))
+            }
+          />
+        </View>
       </View>
     );
   };
 
-  if ((!cart || cart.items.length === 0) && !loading && !error) {
+  if ((!cart || cart.items.length === 0) && !loadingCart && !error) {
     return (
       <SafeAreaView style={tw`nc-CheckoutPage`}>
         <Header title="Checkout" back />
@@ -233,7 +284,7 @@ const Checkout = () => {
             </View>
 
             <View style={tw` border-t border-neutral-300 pt-2 text-sm`}>
-              <View style={tw` border-b border-neutral-300 pb-3 mb-2 text-sm`}>
+              {/* <View style={tw` border-b border-neutral-300 pb-3 mb-2 text-sm`}>
                 <OutfitText style={tw`text-sm`}>Discount code</OutfitText>
                 <View style={tw`mt-1.5 flex flex-row`}>
                   <TextInput
@@ -245,7 +296,7 @@ const Checkout = () => {
                     <OutfitText>Apply</OutfitText>
                   </TouchableOpacity>
                 </View>
-              </View>
+              </View> */}
 
               <View style={tw`flex flex-row justify-between`}>
                 <View>
@@ -288,11 +339,20 @@ const Checkout = () => {
                       quantity: it.quantity,
                       amount: it.price,
                     })) || [],
+                  paymentInfo: paymentInfo as any,
                   setMakingOrder: setMakingOrder,
                 })
               }
-              style={tw`mt-8 w-full bg-[#c48647] py-4 rounded-2xl`}
+              disabled={makingOrder}
+              style={tw`mt-8 w-full bg-[#c48647]  flex flex-row gap-4 py-4 rounded-2xl`}
             >
+              {makingOrder && (
+                <ActivityIndicator
+                  size="small"
+                  color="white"
+                  style={tw`mr-2`}
+                />
+              )}
               <OutfitSemibold style={tw`text-white text-center text-base`}>
                 Confirm order
               </OutfitSemibold>

@@ -21,6 +21,7 @@ import AppImages from "@/utils/constants/images";
 import AuthService from "@/services/api/auth";
 import { WaveIndicator } from "react-native-indicators";
 import StorageService from "@/services/storage";
+import GoogleAuth from "@/components/auth/GoogleAuth";
 
 const SignIn = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<any>(null);
@@ -86,7 +87,7 @@ const SignIn = () => {
     setIsLoading(true);
 
     await AuthService.login(formData, () => {
-      router.push("/(tabs)/Home");
+      router.replace("/(tabs)/Home");
     });
 
     setIsLoading(false);
@@ -191,18 +192,7 @@ const SignIn = () => {
               <View style={styles.line} />
             </View>
 
-            <View style={tw`gap-4`}>
-              <TouchableOpacity
-                style={tw`py-4 px-6 rounded-2xl border border-gray-300 flex flex-row items-center justify-center gap-3`}
-              >
-                <Image
-                  source={AppImages.googleIcon}
-                  resizeMode="contain"
-                  style={tw`w-5 h-5`}
-                />
-                <OutfitText>Continue with Google</OutfitText>
-              </TouchableOpacity>
-            </View>
+            <GoogleAuth />
 
             <OutfitText style={tw`text-center mt-10`}>
               Don't have an account?{" "}
