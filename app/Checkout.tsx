@@ -344,7 +344,7 @@ const Checkout = () => {
                 })
               }
               disabled={makingOrder}
-              style={tw`mt-8 w-full bg-[#c48647]  flex flex-row gap-4 py-4 rounded-2xl`}
+              style={tw`mt-8 w-full bg-[#c48647]  flex flex-row items-center justify-center gap-4 py-4 rounded-2xl`}
             >
               {makingOrder && (
                 <ActivityIndicator
