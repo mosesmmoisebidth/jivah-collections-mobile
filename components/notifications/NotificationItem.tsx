@@ -1,6 +1,7 @@
 import React from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
+import { View, TouchableOpacity, StyleSheet, useWindowDimensions } from "react-native";
 import { Feather, AntDesign, MaterialIcons } from "@expo/vector-icons";
+import RenderHTML from "react-native-render-html";
 import tw from "twrnc";
 import { OutfitSemibold, OutfitText } from "../StyledText";
 import { NotificationItem as INotification } from "@/utils/types";
@@ -14,6 +15,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
   item,
   onPress,
 }) => {
+  const { width } = useWindowDimensions();
   const { title, message, type, createdAt, read } = item;
 
   const getIcon = () => {
@@ -43,7 +45,19 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
         <OutfitSemibold style={tw`text-lg text-gray-900`}>
           {title}
         </OutfitSemibold>
-        <OutfitText style={tw`text-sm text-gray-600`}>{message}</OutfitText>
+
+        <View style={tw`mt-1`}>
+          <RenderHTML
+            contentWidth={width - 96} // Adjusting for padding and icon space
+            source={{ html: `<div>${message}</div>` }}
+            baseStyle={{
+              color: "#4B5563", // text-gray-600
+              fontSize: 14,
+              fontFamily: "Outfit-Regular"
+            }}
+          />
+        </View>
+
         <OutfitText style={tw`text-xs text-gray-400 mt-1`}>
           {new Date(createdAt).toLocaleString()}
         </OutfitText>

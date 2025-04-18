@@ -4,7 +4,7 @@
     "slug": "jivah-collections",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/logo.png",
     "developmentClient": true,
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
@@ -12,7 +12,10 @@
     "ios": {
       "supportsTablet": true,
       "useNextNotificationsApi": true,
-      "bundleIdentifier": "com.yvesmugisha.jivah"
+      "bundleIdentifier": "com.yvesmugisha.jivah",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "googleServicesFile": "./google-services.json",
