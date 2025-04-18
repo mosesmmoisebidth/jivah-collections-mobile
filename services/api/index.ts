@@ -43,10 +43,16 @@ class ApiService {
         refreshToken,
       });
 
-      const newAccessToken = response.data.payload.tokens.accessToken;
+      const newAccessToken = response.data.data.accessToken;
+      const newRefreshToken = response.data.data.newRefreshToken;
 
       if (newAccessToken) {
         await StorageService.saveData("accessToken", newAccessToken);
+        this.setAuthorizedApiToken();
+      }
+
+      if (newRefreshToken) {
+        await StorageService.saveData("refreshToken", newRefreshToken);
         this.setAuthorizedApiToken();
       }
     } catch (error: any) {
@@ -72,9 +78,9 @@ class ApiService {
     this.authorizedApi.interceptors.response.use(
       (response) => response,
       async (error: AxiosError) => {
-        console.log("Going to print the error message")
+        console.log("Going to print the error message");
         //@ts-ignore
-        console.log(error.response?.data?.message)
+        console.log(error.response?.data?.message);
         if (
           error.response?.status === 401 &&
           //@ts-ignore
