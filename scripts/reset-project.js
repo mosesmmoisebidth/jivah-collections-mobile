@@ -1,3 +1,4 @@
+npx expo install expo@^53.0.0 --fix
 #!/usr/bin/env node
 
 /**

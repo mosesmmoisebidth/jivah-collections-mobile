@@ -9,18 +9,47 @@
       "distribution": "internal",
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://api.jivahcollections.com",
+        "FIREBASE_API_KEY": "AIzaSyDLvm4dyidH7EuhvfYphnAEMvGGJuTwfCg",
+        "FIREBASE_AUTH_DOMAIN": "jivah-10dfd.firebaseapp.com",
+        "FIREBASE_PROJECT_ID": "jivah-10dfd",
+        "FIREBASE_STORAGE_BUCKET": "jivah-10dfd.firebasestorage.app",
+        "FIREBASE_MESSAGING_SENDER_ID": "328033865017",
+        "FIREBASE_APP_ID": "1:328033865017:web:207be8ed727355787b6ce8",
+        "FIREBASE_MEASUREMENT_ID": "G-EP9VJPV441"
       }
-
     },
     "preview": {
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://api.jivahcollections.com",
+        "FIREBASE_API_KEY": "AIzaSyDLvm4dyidH7EuhvfYphnAEMvGGJuTwfCg",
+        "FIREBASE_AUTH_DOMAIN": "jivah-10dfd.firebaseapp.com",
+        "FIREBASE_PROJECT_ID": "jivah-10dfd",
+        "FIREBASE_STORAGE_BUCKET": "jivah-10dfd.firebasestorage.app",
+        "FIREBASE_MESSAGING_SENDER_ID": "328033865017",
+        "FIREBASE_APP_ID": "1:328033865017:web:207be8ed727355787b6ce8",
+        "FIREBASE_MEASUREMENT_ID": "G-EP9VJPV441"
       }
     },
     "production": {
       "autoIncrement": true,
       "android": {
-        "buildType": "apk"
+        "buildType": "app-bundle"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://api.jivahcollections.com",
+        "FIREBASE_API_KEY": "AIzaSyDLvm4dyidH7EuhvfYphnAEMvGGJuTwfCg",
+        "FIREBASE_AUTH_DOMAIN": "jivah-10dfd.firebaseapp.com",
+        "FIREBASE_PROJECT_ID": "jivah-10dfd",
+        "FIREBASE_STORAGE_BUCKET": "jivah-10dfd.firebasestorage.app",
+        "FIREBASE_MESSAGING_SENDER_ID": "328033865017",
+        "FIREBASE_APP_ID": "1:328033865017:web:207be8ed727355787b6ce8",
+        "FIREBASE_MEASUREMENT_ID": "G-EP9VJPV441"
       }
     }
   },

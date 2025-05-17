@@ -6,7 +6,7 @@ import axios, {
 } from "axios";
 import StorageService from "../storage";
 
-const BASE_URL = "https://jivah-backend-web-production.up.railway.app";
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
 class ApiService {
   private static unauthorizedApi = axios.create({
@@ -39,7 +39,7 @@ class ApiService {
         throw new Error("No refresh token available");
       }
 
-      const response = await axios.post(`${BASE_URL}/auth/refresh-token`, {
+      const response = await axios.post(`${BASE_URL}/auth/refresh`, {
         refreshToken,
       });
 

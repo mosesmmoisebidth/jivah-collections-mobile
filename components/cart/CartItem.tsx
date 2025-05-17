@@ -61,12 +61,16 @@ const CartItem: React.FC<ProductCardProps> = ({
         text2: `Quantity updated to ${updatedQuantity}.`,
       });
       if (refetch) refetch();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating cart item:", error);
+      console.table(error);
       Toast.show({
         type: "error",
         text1: "Update Failed",
-        text2: "Could not update quantity. Try again.",
+        text2:
+          error.response.data.message ||
+          error?.message ||
+          "Could not update quantity. Try again.",
       });
     } finally {
       setIsUpdating(false);

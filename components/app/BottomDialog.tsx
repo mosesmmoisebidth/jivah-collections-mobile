@@ -6,6 +6,7 @@ import {
   Dimensions,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
 } from "react-native";
 import Modal from "react-native-modal";
 import { Feather } from "@expo/vector-icons";
@@ -43,7 +44,14 @@ const BottomDialog: React.FC<BottomDialogProps> = ({
           <TouchableOpacity onPress={onClose} style={styles.closeButton}>
             <Feather name="x" size={24} color="black" />
           </TouchableOpacity>
-          <View style={styles.content}>{children}</View>
+          <View style={styles.content}>
+            <ScrollView
+              contentContainerStyle={styles.scrollContent}
+              showsVerticalScrollIndicator={false}
+            >
+              {children}
+            </ScrollView>
+          </View>
         </View>
       </KeyboardAvoidingView>
     </Modal>
@@ -70,7 +78,11 @@ const styles = StyleSheet.create({
   },
   content: {
     width: "100%",
-    marginTop: 20,
+  },
+  scrollContent: {
+    width: "100%",
+    paddingBottom: 30,
+    paddingTop: 20,
   },
 });
 

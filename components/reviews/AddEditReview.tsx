@@ -95,7 +95,7 @@ const AddEditReview: React.FC<AddEditReviewProps> = ({
   };
 
   return (
-    <View style={tw`pb-10`}>
+    <View style={tw`pb-10 `}>
       <OutfitBold style={tw`text-xl font-semibold mb-4`}>
         {defaultData ? "Edit Review" : "Add Review"}
       </OutfitBold>

@@ -32,9 +32,6 @@ const LikeButton: React.FC<LikeButtonProps> = ({
 
   const [isLiked, setIsLiked] = useState(liked);
 
-  useEffect(() => {
-    setIsLiked(Math.random() > 0.5);
-  }, []);
 
   const handleLike = async () => {
     if (!user) {

@@ -58,44 +58,46 @@ const Favorites: React.FC = () => {
     <SafeAreaView style={tw`bg-neutral-50 flex-1`}>
       <Header title="Your favoites" back />
       <View style={tw`px-4 pt-3 flex-1`}>
-        <FlatList
-          data={productData?.items}
-          keyExtractor={(item, index) =>
-            item?.id?.toString() || index.toString()
-          }
-          numColumns={2}
-          columnWrapperStyle={tw`justify-between`}
-          renderItem={({ item }) => (
-            <View style={tw`w-[48%] mb-4`}>
-              <ProductCard
-                layout="grid"
-                product={item}
-                onFinishLikeDislike={() => {
-                  refetch();
-                }}
-              />
-            </View>
-          )}
-          ListEmptyComponent={
-            <View style={tw`h-full items-center justify-center pt-[30%]`}>
-              <OutfitText style={tw`text-3xl font-bold text-[#c48647]`}>
-                No Favorites Yet!
-              </OutfitText>
-              <OutfitText style={tw`text-lg text-gray-500 mt-2 text-center`}>
-                You haven't added any products to your favorites yet. Explore
-                and add some now!
-              </OutfitText>
-              <TouchableOpacity
-                style={tw`mt-6 px-10 py-3 bg-[#c48647] rounded-2xl`}
-                onPress={() => router.push("/OurShop")}
-              >
-                <OutfitText style={tw`text-white text-lg font-semibold`}>
-                  Start Exploring
+        {!loading && (
+          <FlatList
+            data={productData?.items}
+            keyExtractor={(item, index) =>
+              item?.id?.toString() || index.toString()
+            }
+            numColumns={2}
+            columnWrapperStyle={tw`justify-between`}
+            renderItem={({ item }) => (
+              <View style={tw`w-[48%] mb-4`}>
+                <ProductCard
+                  layout="grid"
+                  product={item}
+                  onFinishLikeDislike={() => {
+                    refetch();
+                  }}
+                />
+              </View>
+            )}
+            ListEmptyComponent={
+              <View style={tw`h-full items-center justify-center pt-[30%]`}>
+                <OutfitText style={tw`text-3xl font-bold text-[#c48647]`}>
+                  No Favorites Yet!
                 </OutfitText>
-              </TouchableOpacity>
-            </View>
-          }
-        />
+                <OutfitText style={tw`text-lg text-gray-500 mt-2 text-center`}>
+                  You haven't added any products to your favorites yet. Explore
+                  and add some now!
+                </OutfitText>
+                <TouchableOpacity
+                  style={tw`mt-6 px-10 py-3 bg-[#c48647] rounded-2xl`}
+                  onPress={() => router.push("/OurShop")}
+                >
+                  <OutfitText style={tw`text-white text-lg font-semibold`}>
+                    Start Exploring
+                  </OutfitText>
+                </TouchableOpacity>
+              </View>
+            }
+          />
+        )}
 
         {/* Show loading skeletons when fetching new products */}
         {loading && (
