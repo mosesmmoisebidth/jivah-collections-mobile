@@ -18,7 +18,8 @@
         "FIREBASE_STORAGE_BUCKET": "jivah-10dfd.firebasestorage.app",
         "FIREBASE_MESSAGING_SENDER_ID": "328033865017",
         "FIREBASE_APP_ID": "1:328033865017:web:207be8ed727355787b6ce8",
-        "FIREBASE_MEASUREMENT_ID": "G-EP9VJPV441"
+        "FIREBASE_MEASUREMENT_ID": "G-EP9VJPV441",
+        "NODE_OPTIONS": "--legacy-peer-deps"
       }
     },
     "preview": {
@@ -33,7 +34,8 @@
         "FIREBASE_STORAGE_BUCKET": "jivah-10dfd.firebasestorage.app",
         "FIREBASE_MESSAGING_SENDER_ID": "328033865017",
         "FIREBASE_APP_ID": "1:328033865017:web:207be8ed727355787b6ce8",
-        "FIREBASE_MEASUREMENT_ID": "G-EP9VJPV441"
+        "FIREBASE_MEASUREMENT_ID": "G-EP9VJPV441",
+        "NODE_OPTIONS": "--legacy-peer-deps"
       }
     },
     "production": {
@@ -49,7 +51,8 @@
         "FIREBASE_STORAGE_BUCKET": "jivah-10dfd.firebasestorage.app",
         "FIREBASE_MESSAGING_SENDER_ID": "328033865017",
         "FIREBASE_APP_ID": "1:328033865017:web:207be8ed727355787b6ce8",
-        "FIREBASE_MEASUREMENT_ID": "G-EP9VJPV441"
+        "FIREBASE_MEASUREMENT_ID": "G-EP9VJPV441",
+        "NODE_OPTIONS": "--legacy-peer-deps"
       }
     }
   },
